@@ -32,7 +32,10 @@
                 width = 960 - margin.left - margin.right,
                 height = 200 - margin.top - margin.bottom;
 
-            var svg, verticalLine;
+            var svg, tooltip, verticalLine;
+            var tooltipWidth = 100,
+                tooltipHeight = 60,
+                tooltipMargin = {top: 20, right: 20, bottom: 20, left: 20};
 
             //  Dataset is the data after converted
             var dataset, datasetLen;
@@ -48,6 +51,18 @@
                     .attr('class', 'd3-chart')
                     .attr('width', width + margin.left + margin.right)
                     .attr('height', datasetLen * (height+margin.top+margin.bottom));
+            };
+            var drawTooltip = function()
+            {
+                tooltip = svg.append('rect')
+                    .attr('class', 'tooltip')
+                    .attr('opacity', 0)
+                    .attr({
+                        x: 0,
+                        y: 0,
+                        width: tooltipWidth,
+                        height: tooltipHeight
+                    });
             };
             var drawVerticalLine = function()
             {
@@ -118,9 +133,12 @@
             // Mouse move binding function
             var mouseMoveFun = function()
             {
-                var mouseX = d3.mouse(this)[0];
+                var self = this.node();
+                var mouseX = d3.mouse(self)[0],
+                    mouseY = d3.mouse(self)[1];
                 var verticalLineX;
 
+                // when mousemove, every chart calculates the correct dot point
                 dataset.forEach(function(v, i)
                 {
                     var mainLine = mainLines[i],
@@ -216,13 +234,34 @@
                         .attr('cx', xScale(xAtDotValue))
                         .attr('cy', yScales[i](yAtDotValue));
 
-                //        debug
-                //        console.log(xScale.invert(pos.x), yScales[i].invert(pos.y));
+                    //  debug
+                    //  console.log(xScale.invert(pos.x), yScales[i].invert(pos.y));
 
                     verticalLineX = xScale(xAtDotValue);
+
+                    // console.log(xAtDotValue, yAtDotValue);
+
+                    // set value on tooltip (xAtDotValue & yAtDotValue)
+//                    tooltip.append();
                 });
 
-
+                // set tooltip position
+                var tooltipX = verticalLineX + margin.left + tooltipMargin.left,
+                    tooltipY = mouseY + margin.top  + tooltipMargin.top + arguments[0] * (height + margin.top + margin.bottom),
+                    svgWidth = svg.node().offsetWidth,
+                    svgHeight = svg.node().offsetHeight;
+                if ((tooltipX + tooltipWidth + tooltipMargin.right) > svgWidth)
+                {
+                    tooltipX = verticalLineX + margin.left - (tooltipWidth + tooltipMargin.right);
+                }
+                if ((tooltipY + tooltipHeight + tooltipMargin.top) > svgHeight)
+                {
+                    tooltipY = mouseY + margin.top - (tooltipMargin.bottom + tooltipHeight) + arguments[0] * (height + margin.top + margin.bottom);
+                }
+                tooltip
+                    .attr('opacity', 1)
+                    .attr('x', tooltipX)
+                    .attr('y', tooltipY);
 
                 // set vertical line position
                 verticalLine
@@ -240,6 +279,7 @@
                 {
                     v.attr('opacity', 0);
                 });
+                tooltip.attr('opacity', 0);
             };
 
             var drawCharts = function()
@@ -281,13 +321,6 @@
                         .attr('stroke', 'red')
                         .attr('fill', 'none')
                         .attr('clip-path', 'url(#clip)');
-                    var rect = graph.append('rect')
-                        .attr('x', 0)
-                        .attr('y', 0)
-                        .attr('width', width)
-                        .attr('height', height)
-                        .attr('fill', 'transparent')
-                        .attr('cursor', 'move');
 
                     // draw each chart circles
                     graph.selectAll('circle')
@@ -310,6 +343,15 @@
                             r: 6,
                             fill: 'purple'
                         });
+
+                    var rect = graph.append('rect')
+                        .attr('x', 0)
+                        .attr('y', 0)
+                        .attr('width', width)
+                        .attr('height', height)
+                        .attr('fill', 'transparent')
+                        .attr('cursor', 'move');
+
 
                     bindOnZoomArr.push(onZoomFun(i, graph, xAxis, mainLine, line, yScale));
                     graphes.push(graph);
@@ -353,7 +395,7 @@
             {
                 rects.forEach(function(o, index)
                 {
-                    o.on('mousemove', mouseMoveFun)
+                    o.on('mousemove', mouseMoveFun.bind(o, index))
                      .on('mouseout', mouseOutFun);
                 });
             };
@@ -384,18 +426,22 @@
                 defineSvg.call(this);
                 // Draw vertical line
                 drawVerticalLine();
+
                 // Define Common xScale & xAxis (x is common)
                 defineCommonX();
 
                 // Draw charts using data
                 drawCharts();
                 // Zoom binding
+                drawTooltip();
+
                 zoomBind();
                 // Mouse move binding
                 mouseMoveBind();
             };
             //  Start here
             var originDataSelection = section;
+            originDataSelection.node().style.position = 'relative';
             originDataSelection.each(dealWithSelection);
         };
 

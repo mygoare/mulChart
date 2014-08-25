@@ -1,6 +1,6 @@
 (function()
 {
-    var mulChart = function()
+    d3.mulChart = function()
     {
         var chart = function(section)
         {

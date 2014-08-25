@@ -8,7 +8,7 @@
             /*
             Origin data sample:
             {
-                todo: add type like 'time' or 'number'
+                todo: add type like 'time' or 'number', y axis alias names
                 x: [1, 3, 5, 7, 9, 11, 13, 15, 29], // probably timestamps
                 y: [
                     [2,3,4,3,34,5,6,3,2],
@@ -54,15 +54,10 @@
             };
             var drawTooltip = function()
             {
-                tooltip = svg.append('rect')
-                    .attr('class', 'tooltip')
-                    .attr('opacity', 0)
-                    .attr({
-                        x: 0,
-                        y: 0,
-                        width: tooltipWidth,
-                        height: tooltipHeight
-                    });
+                var htmlContainer = this;
+                tooltip = document.createElement('div');
+                tooltip.className = 'tooltip';
+                htmlContainer.appendChild(tooltip);
             };
             var drawVerticalLine = function()
             {
@@ -136,7 +131,9 @@
                 var self = this.node();
                 var mouseX = d3.mouse(self)[0],
                     mouseY = d3.mouse(self)[1];
-                var verticalLineX;
+                var xAtDotValue,    // x value
+                    yAtDotValues = [],
+                    verticalLineX;
 
                 // when mousemove, every chart calculates the correct dot point
                 dataset.forEach(function(v, i)
@@ -150,7 +147,8 @@
                         pos;  // 相对坐标的位移
                     // Find the dots on path lines, which intersect with verticalLine
                     // Return pos
-                    while (true) {
+                    while (true)
+                    {
                         if (pointToCheck > pathLength) {
                             pos = mainLine.node().getPointAtLength(pathLength);
                             break;
@@ -169,7 +167,7 @@
                     // Two methods here: Linear search && Binary search
                     var currentXValue = xScale.invert(pos.x);   // value, not position offset
                     var singleLineData = dataset[i];
-                    var xAtDotValue, yAtDotValue;  // x, y value
+                    var yAtDotValue;  // y value
 
                     var getRightDotValue = function(prev, after)
                     {
@@ -229,20 +227,18 @@
                         binarySearch(1, l);
 
                     }
+
                     // set the position
                     circle.attr('opacity', 1)
                         .attr('cx', xScale(xAtDotValue))
                         .attr('cy', yScales[i](yAtDotValue));
-
                     //  debug
                     //  console.log(xScale.invert(pos.x), yScales[i].invert(pos.y));
 
                     verticalLineX = xScale(xAtDotValue);
 
                     // console.log(xAtDotValue, yAtDotValue);
-
-                    // set value on tooltip (xAtDotValue & yAtDotValue)
-//                    tooltip.append();
+                    yAtDotValues.push(yAtDotValue);
                 });
 
                 // set tooltip position
@@ -258,10 +254,28 @@
                 {
                     tooltipY = mouseY + margin.top - (tooltipMargin.bottom + tooltipHeight) + arguments[0] * (height + margin.top + margin.bottom);
                 }
-                tooltip
-                    .attr('opacity', 1)
-                    .attr('x', tooltipX)
-                    .attr('y', tooltipY);
+                tooltip.style.opacity = 0.9;
+                tooltip.style.left = tooltipX + 'px';
+                tooltip.style.top = tooltipY + 'px';
+
+                // set value on tooltip (xAtDotValue & yAtDotValue)
+                var tooltipTrs = '';
+                yAtDotValues.forEach(function(v, i)
+                {
+                    tooltipTrs += '<tr></tr><td><span></span>Light</td><td>'+v+'</td></tr>';
+                });
+                var table =
+                    '<table>' +
+                    '<tbody>' +
+                    '<tr>' +
+                    '<th colspan="2"></th>' +
+                    '</tr>' +
+                        tooltipTrs +
+                    '</tbody>' +
+                    '</table>';
+                tooltip.innerHTML = table;
+                var tooltipTh = tooltip.getElementsByTagName('th')[0];
+                tooltipTh.innerHTML = xAtDotValue;
 
                 // set vertical line position
                 verticalLine
@@ -279,7 +293,7 @@
                 {
                     v.attr('opacity', 0);
                 });
-                tooltip.attr('opacity', 0);
+                tooltip.style.opacity = 0;
             };
 
             var drawCharts = function()
@@ -432,9 +446,8 @@
 
                 // Draw charts using data
                 drawCharts();
+                drawTooltip.call(this);
                 // Zoom binding
-                drawTooltip();
-
                 zoomBind();
                 // Mouse move binding
                 mouseMoveBind();

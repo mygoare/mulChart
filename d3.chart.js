@@ -6,7 +6,9 @@
         var mainWidth = 960,
             mainHeight = 200;
 
-        var chart = function(section)
+        var self;
+
+        var chart = function(selection)
         {
             // Data model
             /*
@@ -31,7 +33,6 @@
             ]
             */
 
-
             var margin = {top: 20, right: 10, bottom: 30, left: 40},
                 width = mainWidth - margin.left - margin.right,
                 height = mainHeight - margin.top - margin.bottom;
@@ -44,7 +45,6 @@
             //  Dataset is the data after converted
             var dataset, datasetLen;
             var xScale, xAxis;
-
 
             var bindOnZoomArr = [], graphes = [], rects = [], circles = [], mainLines = [], yScales = [];
 
@@ -86,9 +86,9 @@
             // Convert originData to resultData function
             var convertDataFormat = function(originData)
             {
-                var xData = originData.x,
+                var xData = clone(originData.x),
+                    yData = clone(originData.y),
                     xDataLen = xData.length,
-                    yData = originData.y,
                     yDataLen = yData.length;
 
                 for (var i = 0; i < yDataLen; i++)
@@ -147,6 +147,7 @@
                     var mainLine = mainLines[i],
                         circle = circles[i];
 
+
                     var pathLength = mainLine.node().getTotalLength();
                     var pointToCheck = 0,
                         increment,
@@ -187,6 +188,7 @@
                         {
                             xAtDotValue = singleLineData[after].x;
                             yAtDotValue = singleLineData[after].y;
+
                         }
                     };
 
@@ -315,6 +317,7 @@
 
             var drawCharts = function()
             {
+                console.log(this);
                 for(var i = 0; i < datasetLen; i++)
                 {
                     var yScale = d3.scale.linear().domain(d3.extent(dataset[i], function(d){return d.y})).range([height, 0]);
@@ -323,7 +326,8 @@
                         .attr('class', 'g'+i+' d3-chart-g')
                         .attr('transform', 'translate('+margin.left+','+ (margin.top + i * (height + margin.top + margin.bottom) ) +')');
 
-                    var graph = d3.select('.g'+i);
+                    var graph = d3.select(this)
+                        .select('.g'+i);
                     graph.append('clipPath')
                         .attr('id', 'clip')
                         .append('rect')
@@ -462,7 +466,7 @@
                 defineCommonX();
 
                 // Draw charts using data
-                drawCharts();
+                drawCharts.call(this);
                 drawTooltip.call(this);
                 // Zoom binding
                 zoomBind();
@@ -470,7 +474,8 @@
                 mouseMoveBind();
             };
             //  Start here
-            var originDataSelection = section;
+            var originDataSelection = selection;
+            self = originDataSelection.node();
             originDataSelection.node().style.position = 'relative';
             originDataSelection.each(dealWithSelection);
         };
@@ -492,6 +497,39 @@
             mainHeight = value;
             return chart;
         };
+
+        // Methods
+        chart.destroy = function()
+        {
+            self.innerHTML = '';
+            return chart;
+        };
+
+        // clone object without reference
+        // http://stackoverflow.com/questions/122102/what-is-the-most-efficient-way-to-clone-an-object
+        function clone(obj)
+        {
+            if (obj == null || typeof(obj) != 'object')
+                return obj;
+
+            var temp = obj.constructor(); // changed
+
+            for(var key in obj)
+            {
+                if (obj.hasOwnProperty(key))
+                {
+                    temp[key] = clone(obj[key]);
+                }
+            }
+            return temp;
+        }
+
+        function convertHtmlToDomElementObject(s)
+        {
+            var el = document.createElement('div');
+            el.innerHTML = s;
+            return el.childNodes[0];
+        }
 
         return chart;
 

@@ -38,6 +38,8 @@
 -->
 
 </div>
+<hr/>
+<div id="aa"></div>
 
 <!--<script src="d3.chart.origin.js"></script>-->
 <script src="d3.chart.js"></script>
@@ -54,13 +56,16 @@
     };
 
     // Get chart fun
-    var myChart = d3.mulChart().mainWidth(600);
+    var myChart = d3.mulChart();
     // Section with data
     // https://github.com/mbostock/d3/wiki/Selections#datum
     var exampleSelection = d3.select('#example').datum(data);
     // Call to bind & draw
     // https://github.com/mbostock/d3/wiki/Selections#call
     exampleSelection.call(myChart);
+
+    // How to redraw mulChart
+/*    exampleSelection.call(myChart.destroy().mainWidth(600));*/
 </script>
 </body>
 </html>

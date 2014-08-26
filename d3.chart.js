@@ -269,7 +269,7 @@
                     }
                     if ((tooltipY + tooltipHeight + tooltipMargin.top) > svgHeight)
                     {
-                        tooltipY = mouseY + margin.top - (tooltipMargin.bottom + tooltipHeight) + arguments[0] * (height + margin.top + margin.bottom);
+                        tooltipY = mouseY - margin.top - (tooltipMargin.bottom + tooltipHeight) + arguments[0] * (height + margin.top + margin.bottom);
                     }
                     tooltip.style.opacity = 0.9;
                     tooltip.style.left = tooltipX + 'px';

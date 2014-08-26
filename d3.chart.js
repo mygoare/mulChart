@@ -2,6 +2,10 @@
 {
     d3.mulChart = function()
     {
+        // params
+        var mainWidth = 960,
+            mainHeight = 200;
+
         var chart = function(section)
         {
             // Data model
@@ -29,8 +33,8 @@
 
 
             var margin = {top: 20, right: 10, bottom: 30, left: 40},
-                width = 960 - margin.left - margin.right,
-                height = 200 - margin.top - margin.bottom;
+                width = mainWidth - margin.left - margin.right,
+                height = mainHeight - margin.top - margin.bottom;
 
             var svg, tooltip, verticalLine;
             var tooltipWidth = 100,
@@ -135,6 +139,8 @@
                     yAtDotValues = [],
                     verticalLineX;
 
+                var flag = true;
+
                 // when mousemove, every chart calculates the correct dot point
                 dataset.forEach(function(v, i)
                 {
@@ -145,6 +151,7 @@
                     var pointToCheck = 0,
                         increment,
                         pos;  // 相对坐标的位移
+
                     // Find the dots on path lines, which intersect with verticalLine
                     // Return pos
                     while (true)
@@ -228,6 +235,12 @@
 
                     }
 
+                    if (xScale(xAtDotValue) < 0 || xScale(xAtDotValue) > width)
+                    {
+                        flag = false;
+                        return false;
+                    }
+
                     // set the position
                     circle.attr('opacity', 1)
                         .attr('cx', xScale(xAtDotValue))
@@ -241,49 +254,53 @@
                     yAtDotValues.push(yAtDotValue);
                 });
 
-                // set tooltip position
-                var tooltipX = verticalLineX + margin.left + tooltipMargin.left,
-                    tooltipY = mouseY + margin.top  + tooltipMargin.top + arguments[0] * (height + margin.top + margin.bottom),
-                    svgWidth = svg.node().offsetWidth,
-                    svgHeight = svg.node().offsetHeight;
-                if ((tooltipX + tooltipWidth + tooltipMargin.right) > svgWidth)
+                if (flag)
                 {
-                    tooltipX = verticalLineX + margin.left - (tooltipWidth + tooltipMargin.right);
-                }
-                if ((tooltipY + tooltipHeight + tooltipMargin.top) > svgHeight)
-                {
-                    tooltipY = mouseY + margin.top - (tooltipMargin.bottom + tooltipHeight) + arguments[0] * (height + margin.top + margin.bottom);
-                }
-                tooltip.style.opacity = 0.9;
-                tooltip.style.left = tooltipX + 'px';
-                tooltip.style.top = tooltipY + 'px';
-
-                // set value on tooltip (xAtDotValue & yAtDotValue)
-                var tooltipTrs = '';
-                yAtDotValues.forEach(function(v, i)
-                {
-                    tooltipTrs += '<tr></tr><td><span></span>Light</td><td>'+v+'</td></tr>';
-                });
-                var table =
-                    '<table>' +
-                    '<tbody>' +
-                    '<tr>' +
-                    '<th colspan="2"></th>' +
-                    '</tr>' +
-                        tooltipTrs +
-                    '</tbody>' +
-                    '</table>';
-                tooltip.innerHTML = table;
-                var tooltipTh = tooltip.getElementsByTagName('th')[0];
-                tooltipTh.innerHTML = xAtDotValue;
-
-                // set vertical line position
-                verticalLine
-                    .attr('opacity', 1)
-                    .attr('transform', function()
+                    // set tooltip position
+                    var tooltipX = verticalLineX + margin.left + tooltipMargin.left,
+                        tooltipY = mouseY + margin.top  + tooltipMargin.top + arguments[0] * (height + margin.top + margin.bottom),
+                        svgWidth = svg.node().offsetWidth,
+                        svgHeight = svg.node().offsetHeight;
+                    if ((tooltipX + tooltipWidth + tooltipMargin.right) > svgWidth)
                     {
-                        return 'translate('+(verticalLineX + margin.left)+')'
-                    })
+                        tooltipX = verticalLineX + margin.left - (tooltipWidth + tooltipMargin.right);
+                    }
+                    if ((tooltipY + tooltipHeight + tooltipMargin.top) > svgHeight)
+                    {
+                        tooltipY = mouseY + margin.top - (tooltipMargin.bottom + tooltipHeight) + arguments[0] * (height + margin.top + margin.bottom);
+                    }
+                    tooltip.style.opacity = 0.9;
+                    tooltip.style.left = tooltipX + 'px';
+                    tooltip.style.top = tooltipY + 'px';
+
+                    // set value on tooltip (xAtDotValue & yAtDotValue)
+                    var tooltipTrs = '';
+                    yAtDotValues.forEach(function(v, i)
+                    {
+                        tooltipTrs += '<tr></tr><td><span></span>Light</td><td>'+v+'</td></tr>';
+                    });
+                    var table =
+                        '<table>' +
+                        '<tbody>' +
+                        '<tr>' +
+                        '<th colspan="2"></th>' +
+                        '</tr>' +
+                        tooltipTrs +
+                        '</tbody>' +
+                        '</table>';
+                    tooltip.innerHTML = table;
+                    var tooltipTh = tooltip.getElementsByTagName('th')[0];
+                    tooltipTh.innerHTML = xAtDotValue;
+
+                    // set vertical line position
+                    verticalLine
+                        .attr('opacity', 1)
+                        .attr('transform', function()
+                        {
+                            return 'translate('+(verticalLineX + margin.left)+')'
+                        })
+                }
+
             };
 
             var mouseOutFun = function()
@@ -458,10 +475,23 @@
             originDataSelection.each(dealWithSelection);
         };
 
-        chart.width = function()
-        {};
-        chart.height = function()
-        {};
+        chart.mainWidth = function(value)
+        {
+            if (!arguments.length)
+                return mainWidth;
+
+            mainWidth = value;
+            return chart;
+        };
+
+        chart.mainHeight = function(value)
+        {
+            if (!arguments.length)
+                return mainHeight;
+
+            mainHeight = value;
+            return chart;
+        };
 
         return chart;
 

@@ -14,7 +14,7 @@
             /*
             Origin data sample:
             {
-                todo: add type like 'time' or 'number', y axis alias names
+                todo: add category, alias, unit etc.
                 category: 'date',   // or integer
                 x: [1, 3, 5, 7, 9, 11, 13, 15, 29], // probably timestamps
                 y: [

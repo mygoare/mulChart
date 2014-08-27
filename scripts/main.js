@@ -1,17 +1,9 @@
-<!DOCTYPE html>
-<html>
-<head lang="en">
-    <meta charset="UTF-8">
-    <title>D3</title>
-    <link rel="stylesheet" href="../normalize.min.css"/>
-    <script src="d3.js"></script>
-    <script src="mulChart.js"></script>
-    <link rel="stylesheet" href="mulChart.css"/>
-</head>
-<body>
-<h1>Example:</h1>
-<div id="example"></div>
-<script>
+require.config({
+    baseUrl: './'
+});
+
+require(['d3', 'mulChart'], function(d3, mulChart)
+{
     var a = ["Jan 2000", "Feb 2000", "Mar 2000", "Apr 2000", "May 2000", "Jun 2000", "Jul 2000", "Aug 2000", "Sep 2000", "Oct 2000", "Nov 2000", "Dec 2000", "Jan 2001", "Feb 2001", "Mar 2001", "Apr 2001", "May 2001", "Jun 2001", "Jul 2001", "Aug 2001", "Sep 2001", "Oct 2001", "Nov 2001", "Dec 2001", "Jan 2002", "Feb 2002", "Mar 2002", "Apr 2002", "May 2002", "Jun 2002", "Jul 2002", "Aug 2002", "Sep 2002"];
     var b = [];
 
@@ -42,8 +34,4 @@
     // https://github.com/mbostock/d3/wiki/Selections#call
     exampleSelection.call(myChart);
 
-    // How to redraw mulChart
-//    exampleSelection.call(myChart.destroy().mainWidth(500));
-</script>
-</body>
-</html>
+});

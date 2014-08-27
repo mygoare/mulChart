@@ -24,7 +24,7 @@ Before start using the chart, you should organize your data which requested from
 
 1. Call d3.mulChart
 
-		var myChart = d3.mulChart();
+		var myChart = mulChart();
 		
 2. Select the container & bind the data
 
@@ -46,5 +46,6 @@ Then every single chart will be 600px width & 150px height.
 ### To do list:
 
 *	<del>可让x轴为时间显示</del>
+*   <del>添加AMD, CommonJs支持</del>
 *	每单个表格的名称、单位、颜色标识
 *	可自行通过修改 less 来改变 mulChart 的样式

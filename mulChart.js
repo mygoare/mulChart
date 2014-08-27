@@ -1,7 +1,13 @@
-(function()
+(function(window)
 {
-    d3.mulChart = function()
+    var mulChart = {};
+
+    mulChart.version = '0.0.1';
+
+    mulChart.generate = function()
     {
+        var d3 = window.d3 ? window.d3 : 'undefined' !== typeof require ? require("d3") : undefined;
+
         // params
         var mainWidth = 960,
             mainHeight = 200;
@@ -12,29 +18,29 @@
         {
             // Data model
             /*
-            Origin data sample:
-            {
-                todo: add category, alias, unit etc.
-                category: 'date',   // or integer
-                x: [1, 3, 5, 7, 9, 11, 13, 15, 29], // probably timestamps
-                y: [
-                    [2,3,4,3,34,5,6,3,2],
-                    [2,3,4,3,34,5,6,3,2],
-                    [2,3,4,3,34,5,6,3,2],
-                    [2,3,4,3,34,5,6,3,2]
-                ],
-                alias: ['Light', 'Power', 'Battery', 'temperature'],
-                unit: []
-            }
+             Origin data sample:
+             {
+                 todo: add category, alias, unit etc.
+                 category: 'date',   // or integer
+                 x: [1, 3, 5, 7, 9, 11, 13, 15, 29], // probably timestamps
+                 y: [
+                     [2,3,4,3,34,5,6,3,2],
+                     [2,3,4,3,34,5,6,3,2],
+                     [2,3,4,3,34,5,6,3,2],
+                     [2,3,4,3,34,5,6,3,2]
+                 ],
+                 alias: ['Light', 'Power', 'Battery', 'temperature'],
+                 unit: []
+             }
 
-            Result data sample:
-            [
-                [{x: 1, y: 2},{x: 3, y: 5},{x: 5, y: 23},{x: 7, y: 2},{x: 9, y: 2},{x: 11, y: 22},{x: 13, y: 132},{x: 15, y: 7},{x: 29, y: 7}],
-                [{x: 1, y: 12},{x: 3, y: 15},{x: 5, y: 3},{x: 7, y: 21},{x: 9, y: 2},{x: 11, y: 22},{x: 13, y: 32},{x: 15, y: 71},{x: 29, y: 7}],
-                [{x: 1, y: 22},{x: 3, y: 25},{x: 5, y: 33},{x: 7, y: 25},{x: 9, y: 2},{x: 11, y: 22},{x: 13, y: 32},{x: 15, y: 7},{x: 29, y: 7}],
-                [{x: 1, y: 32},{x: 3, y: 35},{x: 5, y: 13},{x: 7, y: 29},{x: 9, y: 2},{x: 11, y: 22},{x: 13, y: 32},{x: 15, y: 98},{x: 29, y: 7}]
-            ]
-            */
+             Result data sample:
+             [
+                 [{x: 1, y: 2},{x: 3, y: 5},{x: 5, y: 23},{x: 7, y: 2},{x: 9, y: 2},{x: 11, y: 22},{x: 13, y: 132},{x: 15, y: 7},{x: 29, y: 7}],
+                 [{x: 1, y: 12},{x: 3, y: 15},{x: 5, y: 3},{x: 7, y: 21},{x: 9, y: 2},{x: 11, y: 22},{x: 13, y: 32},{x: 15, y: 71},{x: 29, y: 7}],
+                 [{x: 1, y: 22},{x: 3, y: 25},{x: 5, y: 33},{x: 7, y: 25},{x: 9, y: 2},{x: 11, y: 22},{x: 13, y: 32},{x: 15, y: 7},{x: 29, y: 7}],
+                 [{x: 1, y: 32},{x: 3, y: 35},{x: 5, y: 13},{x: 7, y: 29},{x: 9, y: 2},{x: 11, y: 22},{x: 13, y: 32},{x: 15, y: 98},{x: 29, y: 7}]
+             ]
+             */
 
             var margin = {top: 20, right: 10, bottom: 30, left: 40},
                 width = mainWidth - margin.left - margin.right,
@@ -283,12 +289,12 @@
                     });
                     var table =
                         '<table>' +
-                            '<tbody>' +
-                                '<tr>' +
-                                    '<th colspan="2"></th>' +
-                                '</tr>' +
-                                tooltipTrs +
-                            '</tbody>' +
+                        '<tbody>' +
+                        '<tr>' +
+                        '<th colspan="2"></th>' +
+                        '</tr>' +
+                        tooltipTrs +
+                        '</tbody>' +
                         '</table>';
                     tooltip.innerHTML = table;
                     var tooltipTh = tooltip.getElementsByTagName('th')[0];
@@ -453,7 +459,7 @@
                 rects.forEach(function(o, index)
                 {
                     o.on('mousemove', mouseMoveFun.bind(o, index))
-                     .on('mouseout', mouseOutFun);
+                        .on('mouseout', mouseOutFun);
                 });
             };
 
@@ -579,5 +585,23 @@
 
         return chart;
 
+    };
+
+    // AMD, CommonJs support
+    if (typeof define === 'function' && define.amd)
+    {
+        define('mulChart', ['d3'], function(d3)
+        {
+            return mulChart;
+        })
     }
-})();
+    else if ('undefined' !== typeof exports && 'undefined' !== typeof module)
+    {
+        module.exports = mulChart;
+    }
+    else
+    {
+        window.mulChart = mulChart;
+    }
+
+})(window);

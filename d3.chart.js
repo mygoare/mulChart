@@ -40,8 +40,8 @@
                 height = mainHeight - margin.top - margin.bottom;
 
             var svg, tooltip, verticalLine;
-            var tooltipWidth = 100,
-                tooltipHeight = 60,
+            var tooltipWidth,
+                tooltipHeight,
                 tooltipMargin = {top: 20, right: 20, bottom: 20, left: 20};
 
             //  Dataset is the data after converted
@@ -270,23 +270,6 @@
 
                 if (flag)
                 {
-                    // set tooltip position
-                    var tooltipX = verticalLineX + margin.left + tooltipMargin.left,
-                        tooltipY = mouseY + margin.top  + tooltipMargin.top + arguments[0] * (height + margin.top + margin.bottom),
-                        svgWidth = svg.node().offsetWidth,
-                        svgHeight = svg.node().offsetHeight;
-                    if ((tooltipX + tooltipWidth + tooltipMargin.right) > svgWidth)
-                    {
-                        tooltipX = verticalLineX + margin.left - (tooltipWidth + tooltipMargin.right);
-                    }
-                    if ((tooltipY + tooltipHeight + tooltipMargin.top) > svgHeight)
-                    {
-                        tooltipY = mouseY - margin.top - (tooltipMargin.bottom + tooltipHeight) + arguments[0] * (height + margin.top + margin.bottom);
-                    }
-                    tooltip.style.opacity = 0.9;
-                    tooltip.style.left = tooltipX + 'px';
-                    tooltip.style.top = tooltipY + 'px';
-
                     // set value on tooltip (xAtDotValue & yAtDotValue)
                     var tooltipTrs = '';
                     yAtDotValues.forEach(function(v, i)
@@ -305,6 +288,27 @@
                     tooltip.innerHTML = table;
                     var tooltipTh = tooltip.getElementsByTagName('th')[0];
                     tooltipTh.innerHTML = xAtDotValue;
+
+                    tooltipWidth = tooltip.offsetWidth;
+                    tooltipHeight = tooltip.offsetHeight;
+
+                    // set tooltip position
+                    var tooltipX = verticalLineX + margin.left + tooltipMargin.left,
+                        tooltipY = mouseY + margin.top  + tooltipMargin.top + arguments[0] * (height + margin.top + margin.bottom),
+                        svgWidth = svg.node().offsetWidth,
+                        svgHeight = svg.node().offsetHeight;
+                    if ((tooltipX + tooltipWidth + tooltipMargin.right) > svgWidth)
+                    {
+                        tooltipX = verticalLineX + margin.left - (tooltipWidth + tooltipMargin.right);
+                    }
+                    if ((tooltipY + tooltipHeight + tooltipMargin.top) > svgHeight)
+                    {
+                        tooltipY = mouseY + margin.top - (tooltipMargin.bottom + tooltipHeight) + arguments[0] * (height + margin.top + margin.bottom);
+                    }
+                    tooltip.style.opacity = 0.9;
+                    tooltip.style.left = tooltipX + 'px';
+                    tooltip.style.top = tooltipY + 'px';
+
 
                     // set vertical line position
                     verticalLine

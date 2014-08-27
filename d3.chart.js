@@ -23,7 +23,8 @@
                     [2,3,4,3,34,5,6,3,2],
                     [2,3,4,3,34,5,6,3,2]
                 ],
-                alias: ['Light', 'Power', 'Battery', 'temperature']
+                alias: ['Light', 'Power', 'Battery', 'temperature'],
+                unit: []
             }
 
             Result data sample:
@@ -49,6 +50,10 @@
             var xScale, xAxis;
 
             var bindOnZoomArr = [], graphes = [], rects = [], circles = [], mainLines = [], yScales = [];
+
+            var lineColors = ['#ff0000',
+                '#ffaa00',
+                '#aaff00','#00ffaa'];
 
             var defineSvg = function()
             {
@@ -274,7 +279,7 @@
                     var tooltipTrs = '';
                     yAtDotValues.forEach(function(v, i)
                     {
-                        tooltipTrs += '<tr></tr><td><span></span>'+originDataset.alias[i]+'</td><td>'+v+'</td></tr>';
+                        tooltipTrs += '<tr></tr><td><span style="background-color: '+lineColors[i]+'"></span>'+originDataset.alias[i]+'</td><td>'+v+'</td></tr>';
                     });
                     var table =
                         '<table>' +
@@ -370,7 +375,7 @@
                         .interpolate('step');
                     var mainLine = graph.append('path')
                         .attr('d', line(dataset[i]))
-                        .attr('stroke', 'red')
+                        .attr('stroke', lineColors[i])
                         .attr('fill', 'none')
                         .attr('clip-path', 'url(#clip)');
 
@@ -476,6 +481,9 @@
                 // Convert to result data model
                 dataset = convertDataFormat();
                 datasetLen = dataset.length;
+
+                // generate chart line colors
+                // generateColors();
 
                 // Define main svg
                 defineSvg.call(this);

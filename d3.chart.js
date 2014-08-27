@@ -15,13 +15,15 @@
             Origin data sample:
             {
                 todo: add type like 'time' or 'number', y axis alias names
+                category: 'date',   // or integer
                 x: [1, 3, 5, 7, 9, 11, 13, 15, 29], // probably timestamps
                 y: [
                     [2,3,4,3,34,5,6,3,2],
                     [2,3,4,3,34,5,6,3,2],
                     [2,3,4,3,34,5,6,3,2],
                     [2,3,4,3,34,5,6,3,2]
-                ]
+                ],
+                alias: ['Light', 'Power', 'Battery', 'temperature']
             }
 
             Result data sample:
@@ -76,9 +78,19 @@
                     .attr('class', 'vertical-line')
                     .attr('stroke', 'gray');
             };
-            var defineCommonX = function()
+            var defineCommonX = function(data)
             {
-                xScale = d3.scale.linear().domain(d3.extent(data.x, function(d){return d})).range([0, width]);
+                var category = data.category;
+                if (category == 'date')
+                {
+                    xScale = d3.time.scale()
+                }
+                else
+                {
+                    xScale = d3.scale.linear()
+                }
+
+                xScale.domain(d3.extent(data.x, function(d){return d})).range([0, width]);
                 xAxis = d3.svg.axis()
                     .scale(xScale);
             };
@@ -463,7 +475,7 @@
                 drawVerticalLine();
 
                 // Define Common xScale & xAxis (x is common)
-                defineCommonX();
+                defineCommonX(data);
 
                 // Draw charts using data
                 drawCharts.call(this);
@@ -506,22 +518,39 @@
         };
 
         // clone object without reference
-        // http://stackoverflow.com/questions/122102/what-is-the-most-efficient-way-to-clone-an-object
-        function clone(obj)
-        {
-            if (obj == null || typeof(obj) != 'object')
-                return obj;
+        // http://stackoverflow.com/questions/728360/most-elegant-way-to-clone-a-javascript-object
+        function clone(obj) {
+            var copy;
 
-            var temp = obj.constructor(); // changed
+            // Handle the 3 simple types, and null or undefined
+            if (null == obj || "object" != typeof obj) return obj;
 
-            for(var key in obj)
-            {
-                if (obj.hasOwnProperty(key))
-                {
-                    temp[key] = clone(obj[key]);
-                }
+            // Handle Date
+            if (obj instanceof Date) {
+                copy = new Date();
+                copy.setTime(obj.getTime());
+                return copy;
             }
-            return temp;
+
+            // Handle Array
+            if (obj instanceof Array) {
+                copy = [];
+                for (var i = 0, len = obj.length; i < len; i++) {
+                    copy[i] = clone(obj[i]);
+                }
+                return copy;
+            }
+
+            // Handle Object
+            if (obj instanceof Object) {
+                copy = {};
+                for (var attr in obj) {
+                    if (obj.hasOwnProperty(attr)) copy[attr] = clone(obj[attr]);
+                }
+                return copy;
+            }
+
+            throw new Error("Unable to copy obj! Its type isn't supported.");
         }
 
         function convertHtmlToDomElementObject(s)

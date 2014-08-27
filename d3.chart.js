@@ -526,12 +526,13 @@
             return chart;
         };
 
-        // Methods
         chart.destroy = function()
         {
             self.innerHTML = '';
             return chart;
         };
+
+        // Methods
 
         // clone object without reference
         // http://stackoverflow.com/questions/728360/most-elegant-way-to-clone-a-javascript-object

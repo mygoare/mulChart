@@ -587,17 +587,13 @@
 
     };
 
-    // AMD, CommonJs support
+    // AMD support
     if (typeof define === 'function' && define.amd)
     {
-        define('mulChart', ['d3'], function(d3)
+        define(['d3'], function(d3)
         {
             return mulChart;
         })
-    }
-    else if ('undefined' !== typeof exports && 'undefined' !== typeof module)
-    {
-        module.exports = mulChart;
     }
     else
     {

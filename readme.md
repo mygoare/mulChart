@@ -22,7 +22,7 @@ Before start using the chart, you should organize your data which requested from
 
 ### How to use:
 
-1. Call d3.mulChart
+1. Call mulChart
 
 		var myChart = mulChart.generate();
 		

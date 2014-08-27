@@ -5,20 +5,20 @@
 ### Data model
 
 Before start using the chart, you should organize your data request from server to the special Data model, after that you can bind it to the plugin.
-
-		var data = 
-            {
-                category: 'date',   // or integer
-                x: [1, 3, 5, 7, 9, 11, 13, 15, 29], // x axis. probably timestamps (Date object each item)
-                y: 	// y axis
-                [
-                    [2,3,4,3,34,5,6,3,2],
-                    [2,3,4,3,34,5,6,3,2],
-                    [2,3,4,3,34,5,6,3,2],
-                    [2,3,4,3,34,5,6,3,2]
-                ],
-                alias: ['Light', 'Power', 'Battery', 'temperature']  // each chart alias name
-            }
+	
+	var data =
+    	{
+        	category: 'date',   // or integer
+        	x: [1, 3, 5, 7, 9, 11, 13, 15, 29], // x axis. probably timestamps (Date object each item)
+        	y: 	// y axis
+            	[
+                	[2,3,4,3,34,5,6,3,2],
+                	[2,3,4,3,34,5,6,3,2],
+	                [2,3,4,3,34,5,6,3,2],
+    	            [2,3,4,3,34,5,6,3,2]
+        	    ],
+	        alias: ['Light', 'Power', 'Battery', 'temperature']  // each chart alias name
+    	}
 
 ### How to use:
 
@@ -39,7 +39,7 @@ Before start using the chart, you should organize your data request from server 
 
 You can also redraw the chart like this:
 
-		containerSelection.call(myChart.destroy().mainWidth(600).mainHeight(150));
+	containerSelection.call(myChart.destroy().mainWidth(600).mainHeight(150));
 		
 Then every single chart will be 600px width & 150px height.		
 

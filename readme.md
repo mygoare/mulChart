@@ -4,7 +4,7 @@
 
 ### Data model
 
-Before start using the chart, you should organize your data request from server to the special Data model, after that you can bind it to the plugin.
+Before start using the chart, you should organize your data which requested from server to the special Data model, after that you can bind it to the plugin.
 	
 	var data =
     	{

@@ -24,7 +24,7 @@ Before start using the chart, you should organize your data which requested from
 
 1. Call d3.mulChart
 
-		var myChart = mulChart();
+		var myChart = mulChart.generate();
 		
 2. Select the container & bind the data
 

@@ -45,7 +45,7 @@
                 tooltipMargin = {top: 20, right: 20, bottom: 20, left: 20};
 
             //  Dataset is the data after converted
-            var dataset, datasetLen;
+            var originDataset, dataset, datasetLen;
             var xScale, xAxis;
 
             var bindOnZoomArr = [], graphes = [], rects = [], circles = [], mainLines = [], yScales = [];
@@ -78,9 +78,9 @@
                     .attr('class', 'vertical-line')
                     .attr('stroke', 'gray');
             };
-            var defineCommonX = function(data)
+            var defineCommonX = function()
             {
-                var category = data.category;
+                var category = originDataset.category;
                 if (category == 'date')
                 {
                     xScale = d3.time.scale()
@@ -90,16 +90,16 @@
                     xScale = d3.scale.linear()
                 }
 
-                xScale.domain(d3.extent(data.x, function(d){return d})).range([0, width]);
+                xScale.domain(d3.extent(originDataset.x, function(d){return d})).range([0, width]);
                 xAxis = d3.svg.axis()
                     .scale(xScale);
             };
 
             // Convert originData to resultData function
-            var convertDataFormat = function(originData)
+            var convertDataFormat = function()
             {
-                var xData = clone(originData.x),
-                    yData = clone(originData.y),
+                var xData = originDataset.x,
+                    yData = originDataset.y,
                     xDataLen = xData.length,
                     yDataLen = yData.length;
 
@@ -274,21 +274,22 @@
                     var tooltipTrs = '';
                     yAtDotValues.forEach(function(v, i)
                     {
-                        tooltipTrs += '<tr></tr><td><span></span>Light</td><td>'+v+'</td></tr>';
+                        tooltipTrs += '<tr></tr><td><span></span>'+originDataset.alias[i]+'</td><td>'+v+'</td></tr>';
                     });
                     var table =
                         '<table>' +
-                        '<tbody>' +
-                        '<tr>' +
-                        '<th colspan="2"></th>' +
-                        '</tr>' +
-                        tooltipTrs +
-                        '</tbody>' +
+                            '<tbody>' +
+                                '<tr>' +
+                                    '<th colspan="2"></th>' +
+                                '</tr>' +
+                                tooltipTrs +
+                            '</tbody>' +
                         '</table>';
                     tooltip.innerHTML = table;
                     var tooltipTh = tooltip.getElementsByTagName('th')[0];
                     tooltipTh.innerHTML = xAtDotValue;
 
+                    // set tooltip width & height
                     tooltipWidth = tooltip.offsetWidth;
                     tooltipHeight = tooltip.offsetHeight;
 
@@ -469,8 +470,11 @@
                 //    return result;
                 //});
 
+                // have a clone of origin data ready to use, DON'T change data by reference, be careful here.
+                originDataset = clone(data);
+
                 // Convert to result data model
-                dataset = convertDataFormat(data);
+                dataset = convertDataFormat();
                 datasetLen = dataset.length;
 
                 // Define main svg
@@ -479,7 +483,7 @@
                 drawVerticalLine();
 
                 // Define Common xScale & xAxis (x is common)
-                defineCommonX(data);
+                defineCommonX();
 
                 // Draw charts using data
                 drawCharts.call(this);

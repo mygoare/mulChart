@@ -39,7 +39,11 @@ Before start using the chart, you should organize your data which requested from
 
 You can also redraw the chart like this:
 
-	containerSelection.call(myChart.destroy().mainWidth(600).mainHeight(150));
+	// destroy first, and set different mainWidth and mainHeight value
+	myChart.destroy().mainWidth(600).mainHeight(150);
+	
+	// container call it again
+	containerSelection.call(myChart);
 		
 Then every single chart will be 600px width & 150px height.		
 

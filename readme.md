@@ -37,6 +37,22 @@ Before start using the chart, you should organize your data which requested from
 			unit: []
 		}
 	});		
+	
+You can get the value of each configure item:
+
+	myChart.bindto();  // output '#element'
+	myChart.data();
+	myChart.size();  // output {width:800, height:200}
+	myChart.color();
+	
+Or set value to them:
+
+	myChart.bindto('#do');
+	myChart.size({width: 600, height: 100});
+	
+After the value set, then you can redraw to update the chart:
+
+	myChart.redraw();
 		
 ### Redraw
 
@@ -53,7 +69,7 @@ You have two ways to redraw:
 		}
 	});		
 	
-or like writting d3:
+Or like writting d3:
 
 	myChart
 		.bindto('#do')

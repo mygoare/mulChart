@@ -17,35 +17,54 @@ Before start using the chart, you should organize your data which requested from
 	                [2,3,4,3,34,5,6,3,2],
     	            [2,3,4,3,34,5,6,3,2]
         	    ],
-	        alias: ['Light', 'Power', 'Battery', 'temperature']  // each chart alias name
+	        alias: ['Light', 'Power', 'Battery', 'Temperature']  // each chart alias name
     	}
 
 ### How to use:
 
-1. Call mulChart
-
-		var myChart = mulChart.generate();
-		
-2. Select the container & bind the data
-
-		var containerSelection = d3.select('#container').datum(data);
-		
-3. Call and generate the chart
-
-		containerSelection.call(myChart)
-		
+	var myChart = mulChart.generate({
+		bindto: '#element',
+		data: data,
+		size: {
+			width: 800,
+			height: 200
+		},
+		color: {
+			pattern: ['green', 'yellow', 'gray', 'red']
+		},
+		stuff: {
+			alias: ['Light', 'Power', 'Battery', 'Temperature'],
+			unit: []
+		}
+	});		
 		
 ### Redraw
 
-You can also redraw the chart like this:
+You have two ways to redraw:
 
-	// destroy first, and set different mainWidth and mainHeight value
-	myChart.destroy().mainWidth(600).mainHeight(150);
+	myChart.redraw({
+		bindto: '#do',
+		size: {
+			width: 1000,
+			height: 150
+		},
+		color: {
+			pattern: []
+		}
+	});		
 	
-	// container call it again
-	containerSelection.call(myChart);
-		
-Then every single chart will be 600px width & 150px height.		
+or like writting d3:
+
+	myChart
+		.bindto('#do')
+		.size({
+			width: 1000,
+			height: 150
+		})
+		.color({
+			pattern: []
+		})
+		.redraw();
 
 ### To do list:
 

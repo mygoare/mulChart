@@ -88,3 +88,7 @@ Or like writting d3:
 *   <del>添加 AMD 支持</del>
 *	每单个表格的名称、单位、颜色标识
 *	可自行通过修改 less 来改变 mulChart 的样式
+
+### License
+[MIT](http://opensource.org/licenses/MIT)
+

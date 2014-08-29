@@ -1,6 +1,6 @@
 ### Example:
 
-![example](mulChart_example.png)
+![example](mulChart.gif)
 
 ### Data model
 

@@ -21,14 +21,21 @@ define(['d3', './mulChart'], function(d3, mulChart)
         alias: ['Light', 'Power', 'Battery', 'temperature']
     };
 
-    // Get chart fun
-    console.log(d3, mulChart);
-    var myChart = mulChart.generate();
-    // Section with data
-    // https://github.com/mbostock/d3/wiki/Selections#datum
-    var exampleSelection = d3.select('#example').datum(data);
-    // Call to bind & draw
-    // https://github.com/mbostock/d3/wiki/Selections#call
-    exampleSelection.call(myChart);
+    var myChart = mulChart.generate(
+        {
+            bindto: '#example',
+            data: data,
+
+            size:
+            {
+                width: 600,
+                height: 150
+            },
+            color:
+            {
+                pattern: ['red', 'orange', 'gray']
+            }
+        }
+    );
 
 });

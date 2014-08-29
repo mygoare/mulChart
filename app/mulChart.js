@@ -2,15 +2,21 @@
 {
     var mulChart = {};
 
-    mulChart.version = '0.0.1';
+    mulChart.version = '0.0.2';
 
-    mulChart.generate = function()
+    mulChart.generate = function(config)
     {
         var d3 = window.d3 ? window.d3 : 'undefined' !== typeof require ? require("d3") : undefined;
 
         // params
-        var mainWidth = 960,
-            mainHeight = 200;
+        var bindtoElement, data,
+            size = {width: 960, height: 200},
+            margin = {top: 20, right: 10, bottom: 30, left: 40},
+            color =
+            {
+                pattern: ['#ff0000', '#ffaa00', '#aaff00', '#00ffaa']
+            },
+            d3Selection;
 
         var self;
 
@@ -42,9 +48,8 @@
              ]
              */
 
-            var margin = {top: 20, right: 10, bottom: 30, left: 40},
-                width = mainWidth - margin.left - margin.right,
-                height = mainHeight - margin.top - margin.bottom;
+            var width = size.width - margin.left - margin.right,
+                height = size.height - margin.top - margin.bottom;
 
             var svg, tooltip, verticalLine;
             var tooltipWidth,
@@ -56,10 +61,6 @@
             var xScale, xAxis;
 
             var bindOnZoomArr = [], graphes = [], rects = [], circles = [], mainLines = [], yScales = [];
-
-            var lineColors = ['#ff0000',
-                '#ffaa00',
-                '#aaff00','#00ffaa'];
 
             var defineSvg = function()
             {
@@ -285,7 +286,7 @@
                     var tooltipTrs = '';
                     yAtDotValues.forEach(function(v, i)
                     {
-                        tooltipTrs += '<tr></tr><td><span style="background-color: '+lineColors[i]+'"></span>'+originDataset.alias[i]+'</td><td>'+v+'</td></tr>';
+                        tooltipTrs += '<tr></tr><td><span style="background-color: '+color.pattern[i]+'"></span>'+originDataset.alias[i]+'</td><td>'+v+'</td></tr>';
                     });
                     var table =
                         '<table>' +
@@ -381,7 +382,7 @@
                         .interpolate('step');
                     var mainLine = graph.append('path')
                         .attr('d', line(dataset[i]))
-                        .attr('stroke', lineColors[i])
+                        .attr('stroke', color.pattern[i])
                         .attr('fill', 'none')
                         .attr('clip-path', 'url(#clip)');
 
@@ -514,24 +515,96 @@
             originDataSelection.each(dealWithSelection);
         };
 
-        chart.mainWidth = function(value)
+        // Properties:  bindto, data, size, color
+        chart.bindto = function(element)
         {
             if (!arguments.length)
-                return mainWidth;
+                return bindtoElement;
 
-            mainWidth = value;
+            if (element && typeof element === 'string')
+                bindtoElement = element;
+
+            return chart;
+        };
+        chart.data = function(dataObj)
+        {
+            if (!arguments.length)
+                return data;
+
+            if (!!dataObj && typeof dataObj === 'object')
+                data = dataObj;
+
+            return chart;
+        };
+        chart.size = function(obj)
+        {
+            if (!arguments.length)
+                return size;
+
+            if (!!obj && typeof obj === 'object')
+            {
+                if (obj.width)
+                {
+                    size.width = obj.width
+                }
+                if (obj.height)
+                {
+                    size.height = obj.height
+                }
+            }
+
+            return chart;
+        };
+        chart.color = function(obj)
+        {
+            if (!arguments.length)
+                return color;
+
+            if (!!obj && typeof obj === 'object')
+            {
+                if (obj.pattern)
+                {
+                    color.pattern = obj.pattern;
+                }
+            }
+
             return chart;
         };
 
-        chart.mainHeight = function(value)
+        chart.selection = function()
         {
-            if (!arguments.length)
-                return mainHeight;
-
-            mainHeight = value;
-            return chart;
+            return d3Selection;
         };
 
+        //
+        chart.redraw = function(config)
+        {
+            if (!!config && typeof config === 'object')
+            {
+                if (config.bindto)
+                {
+                    this.bindto(config.bindto)
+                }
+                if (config.data)
+                {
+                    this.data(config.data)
+                }
+                if (config.size)
+                {
+                    this.size(config.size);
+                }
+                if (config.color)
+                {
+                    this.color(config.color);
+                }
+            }
+            bindElementWithData(bindtoElement, data);
+
+            this.destroy()
+                .selection()
+                .call(this);
+
+        };
         chart.destroy = function()
         {
             self.innerHTML = '';
@@ -582,6 +655,44 @@
             el.innerHTML = s;
             return el.childNodes[0];
         }
+
+        function bindElementWithData(bindto, data)
+        {
+            if (!!bindto && typeof bindto === 'string' && !!data && typeof data === 'object')
+            {
+                d3Selection = d3.select(bindto).datum(data);
+            }
+            else
+            {
+                console.error('bindto should be string and data should be object.');
+                return;
+            }
+        }
+
+        // Methods End
+
+        if (!config)
+        {
+            console.error('Please set up configure.');
+            return;
+        }
+
+        if (config.bindto && config.data)
+        {
+            chart.bindto(config.bindto);
+            chart.data(config.data);
+        }
+        if (config.size)
+        {
+            chart.size(config.size);
+        }
+        if (config.color)
+        {
+            chart.color(config.color);
+        }
+
+        bindElementWithData(bindtoElement, data);
+        d3Selection.call(chart);
 
         return chart;
 

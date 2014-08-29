@@ -2,6 +2,16 @@
 
 ![example](mulChart.gif)
 
+### Why do this:
+
+We already know that there are many chart libraries which all can make data visualize very well. But I think they all lack one good chart style about how to display multiple charts using the same X-axis.
+
+These charts have common X-axis, but they have different Y-axis. So this will make problems. Because we can't control their Y-axis data scope, if one comes with the scope 100 to 1000, but another only 0 to 5. If you put these data into one chart to show, the 0 to 5 scope line nearly invisible.
+
+Like in the example, the second chart have a max of 97 Y-axis and third chart only 4.2, if we put them in one chart, then the third chart will a little below the second chart line, and you can hard to see more detail (trend e.g.) of the third chart line.
+
+So this is what I want to solve in this repository.
+
 ### Data model
 
 Before start using the chart, you should organize your data which requested from server to the special Data model, after that you can bind it to the plugin.

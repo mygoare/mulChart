@@ -28,12 +28,12 @@ define(['d3', './mulChart'], function(d3, mulChart)
 
             size:
             {
-                width: 600,
+                width: 800,
                 height: 150
             },
             color:
             {
-                pattern: ['red', 'orange', 'gray']
+                pattern: ['red', 'orange', 'gray', 'yellow']
             }
         }
     );

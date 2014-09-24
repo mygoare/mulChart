@@ -70,6 +70,7 @@ You have two ways to redraw:
 
 	myChart.redraw({
 		bindto: '#do',
+		data: testData,
 		size: {
 			width: 1000,
 			height: 150
@@ -83,6 +84,7 @@ Or like writting d3:
 
 	myChart
 		.bindto('#do')
+		.data(testData)
 		.size({
 			width: 1000,
 			height: 150

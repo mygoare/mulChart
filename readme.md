@@ -94,12 +94,12 @@ Or like writting d3:
 
 ### To do list:
 
-*	<del>x轴为 时间 或 数字 显示</del>
-*   <del>添加 AMD , CommonJS支持</del>
-*	<del>每单个表格名称、单位、颜色标识</del>
-*	统一样式模版，便于创造出更多theme
-*	brower install
-*	node module (browerify)
+- [x] x轴为 时间 或 数字 显示
+- [x] 添加 AMD , CommonJS支持
+- [x] 每单个表格名称、单位、颜色标识
+- [ ] 统一样式模版，便于创造出更多theme
+- [ ] brower install
+- [ ] node module (browerify)
 
 ### License
 [MIT](http://opensource.org/licenses/MIT)

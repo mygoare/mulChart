@@ -26,25 +26,25 @@
             /*
              Origin data sample:
              {
-                 todo: add category, alias, unit etc.
-                 category: 'date',   // or integer
-                 x: [1, 3, 5, 7, 9, 11, 13, 15, 29], // probably timestamps
-                 y: [
-                     [2,3,4,3,34,5,6,3,2],
-                     [2,3,4,3,34,5,6,3,2],
-                     [2,3,4,3,34,5,6,3,2],
-                     [2,3,4,3,34,5,6,3,2]
-                 ],
-                 alias: ['Light', 'Power', 'Battery', 'temperature'],
-                 unit: []
+             todo: add category, alias, unit etc.
+             category: 'date',   // or integer
+             x: [1, 3, 5, 7, 9, 11, 13, 15, 29], // probably timestamps
+             y: [
+             [2,3,4,3,34,5,6,3,2],
+             [2,3,4,3,34,5,6,3,2],
+             [2,3,4,3,34,5,6,3,2],
+             [2,3,4,3,34,5,6,3,2]
+             ],
+             alias: ['Light', 'Power', 'Battery', 'temperature'],
+             unit: []
              }
 
              Result data sample:
              [
-                 [{x: 1, y: 2},{x: 3, y: 5},{x: 5, y: 23},{x: 7, y: 2},{x: 9, y: 2},{x: 11, y: 22},{x: 13, y: 132},{x: 15, y: 7},{x: 29, y: 7}],
-                 [{x: 1, y: 12},{x: 3, y: 15},{x: 5, y: 3},{x: 7, y: 21},{x: 9, y: 2},{x: 11, y: 22},{x: 13, y: 32},{x: 15, y: 71},{x: 29, y: 7}],
-                 [{x: 1, y: 22},{x: 3, y: 25},{x: 5, y: 33},{x: 7, y: 25},{x: 9, y: 2},{x: 11, y: 22},{x: 13, y: 32},{x: 15, y: 7},{x: 29, y: 7}],
-                 [{x: 1, y: 32},{x: 3, y: 35},{x: 5, y: 13},{x: 7, y: 29},{x: 9, y: 2},{x: 11, y: 22},{x: 13, y: 32},{x: 15, y: 98},{x: 29, y: 7}]
+             [{x: 1, y: 2},{x: 3, y: 5},{x: 5, y: 23},{x: 7, y: 2},{x: 9, y: 2},{x: 11, y: 22},{x: 13, y: 132},{x: 15, y: 7},{x: 29, y: 7}],
+             [{x: 1, y: 12},{x: 3, y: 15},{x: 5, y: 3},{x: 7, y: 21},{x: 9, y: 2},{x: 11, y: 22},{x: 13, y: 32},{x: 15, y: 71},{x: 29, y: 7}],
+             [{x: 1, y: 22},{x: 3, y: 25},{x: 5, y: 33},{x: 7, y: 25},{x: 9, y: 2},{x: 11, y: 22},{x: 13, y: 32},{x: 15, y: 7},{x: 29, y: 7}],
+             [{x: 1, y: 32},{x: 3, y: 35},{x: 5, y: 13},{x: 7, y: 29},{x: 9, y: 2},{x: 11, y: 22},{x: 13, y: 32},{x: 15, y: 98},{x: 29, y: 7}]
              ]
              */
 
@@ -346,7 +346,6 @@
 
             var drawCharts = function()
             {
-                console.log(this);
                 for(var i = 0; i < datasetLen; i++)
                 {
                     var yScale = d3.scale.linear().domain(d3.extent(dataset[i], function(d){return d.y})).range([height, 0]);
@@ -521,7 +520,7 @@
             if (!arguments.length)
                 return bindtoElement;
 
-            if (element && typeof element === 'string')
+            if (element)
                 bindtoElement = element;
 
             return chart;
@@ -658,13 +657,13 @@
 
         function bindElementWithData(bindto, data)
         {
-            if (!!bindto && typeof bindto === 'string' && !!data && typeof data === 'object')
+            if (!!bindto && !!data && typeof data === 'object')
             {
                 d3Selection = d3.select(bindto).datum(data);
             }
             else
             {
-                console.error('bindto should be string and data should be object.');
+                console.error('bindto should not be empty and data should be object.');
                 return;
             }
         }

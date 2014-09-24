@@ -94,10 +94,10 @@ Or like writting d3:
 
 ### To do list:
 
-*	<del>可让x轴为时间显示</del>
-*   <del>添加 AMD 支持</del>
-*	<del>每单个表格的名称、单位、颜色标识</del>
-*	统一样式模版，便于创造出更多样式
+*	<del>x轴为 时间 或 数字 显示</del>
+*   <del>添加 AMD , CommonJS支持</del>
+*	<del>每单个表格名称、单位、颜色标识</del>
+*	统一样式模版，便于创造出更多theme
 *	brower install
 *	node module (browerify)
 

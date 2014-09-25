@@ -374,7 +374,7 @@
                         .attr('height', '20px')
                         .attr('transform', 'translate('+margin.left+','+ (margin.top - 20 + i * (height + margin.top + margin.bottom) ) +')')
                         .append('xhtml:body')
-                        .html('<p class="chart-title"><span class="icon" style="background-color: '+color.pattern[i]+'"></span>'+originDatasetAlias[i] + '<span class="unit">('+ originDatasetUnit[i] +')</span></p>');
+                        .html('<p class="chart-title"><span class="icon" style="background-color: '+color.pattern[i]+'"></span>'+(originDatasetAlias[i]?originDatasetAlias[i]: '') + '<span class="unit">'+ (originDatasetUnit[i]?originDatasetUnit[i]: '') +'</span></p>');
 
                     var yScale = d3.scale.linear().domain(d3.extent(dataset[i], function(d){return d.y})).range([height, 0]);
 

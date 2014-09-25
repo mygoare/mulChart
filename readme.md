@@ -28,6 +28,7 @@ Before start using the chart, you should organize your data which requested from
     	            [2,3,4,3,34,5,6,3,2]
         	    ],
 	        alias: ['Light', 'Power', 'Battery', 'Temperature']  // each chart alias name
+	        unit: []
     	}
 
 ### How to use:
@@ -42,10 +43,8 @@ Before start using the chart, you should organize your data which requested from
 		color: {
 			pattern: ['green', 'yellow', 'gray', 'red']
 		},
-		stuff: {
-			alias: ['Light', 'Power', 'Battery', 'Temperature'],
-			unit: []
-		}
+		alias: ['Light', 'Power', 'Battery', 'Temperature'],
+		unit: []
 	});		
 	
 You can get the value of each configure item:

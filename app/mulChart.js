@@ -87,8 +87,7 @@
                         'y2': datasetLen * (height+margin.top+margin.bottom)
                     })
                     .attr('opacity', 0)
-                    .attr('class', 'vertical-line')
-                    .attr('stroke', 'gray');
+                    .attr('class', 'vertical-line');
             };
             var defineCommonX = function()
             {

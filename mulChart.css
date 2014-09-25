@@ -12,6 +12,10 @@
   font-size: 12px;
   text-anchor: middle;
 }
+.vertical-line {
+  fill: none;
+  stroke: gray;
+}
 .circle-dot {
   fill: #1e90ff;
 }

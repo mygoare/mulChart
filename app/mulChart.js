@@ -60,6 +60,14 @@
             var originDataset, dataset, datasetLen;
             var xScale, xAxis;
 
+            // originDataset properties
+            /*
+                category: date, integer
+                alias   : []
+                unit    : []
+             */
+            var originDatasetCategory, originDatasetAlias, originDatasetUnit;
+
             var bindOnZoomArr = [], graphes = [], rects = [], circles = [], mainLines = [], yScales = [];
 
             var defineSvg = function()
@@ -91,8 +99,7 @@
             };
             var defineCommonX = function()
             {
-                var category = originDataset.category;
-                if (category == 'date')
+                if (originDatasetCategory == 'date')
                 {
                     xScale = d3.time.scale()
                 }
@@ -285,7 +292,10 @@
                     var tooltipTrs = '';
                     yAtDotValues.forEach(function(v, i)
                     {
-                        tooltipTrs += '<tr></tr><td><span style="background-color: '+color.pattern[i]+'"></span>'+originDataset.alias[i]+'</td><td>'+v+'</td><td>'+originDataset.unit[i]+'</td></tr>';
+                        var alias = originDatasetAlias[i] ? originDatasetAlias[i] : '';
+                        var unit  = originDatasetUnit[i]  ? originDatasetUnit[i]  : '';
+
+                        tooltipTrs += '<tr></tr><td><span style="background-color: '+color.pattern[i]+'"></span>'+alias+'</td><td>'+v+'</td><td>'+unit+'</td></tr>';
                     });
                     var table =
                         '<table>' +
@@ -300,8 +310,16 @@
                     tooltip.innerHTML = table;
                     var tooltipThDate = tooltip.getElementsByTagName('th')[0];
                     var tooltipThTime = tooltip.getElementsByTagName('th')[1];
-                    tooltipThDate.innerHTML = d3.time.format('%a %b %d %Y')(xAtDotValue);
-                    tooltipThTime.innerHTML = d3.time.format('%H:%M:%S')(xAtDotValue);
+                    if (originDatasetCategory == 'date')
+                    {
+                        tooltipThDate.innerHTML = d3.time.format('%a %b %d %Y')(xAtDotValue);
+                        tooltipThTime.innerHTML = d3.time.format('%H:%M:%S')(xAtDotValue);
+                    }
+                    else
+                    {
+                        tooltipThDate.innerHTML = xAtDotValue;
+                    }
+
 
                     // set tooltip width & height
                     tooltipWidth = tooltip.offsetWidth;
@@ -468,29 +486,23 @@
 
             var dealWithSelection = function(data, index)
             {
-                /* todo: judge every data's length */
-                /////////////////////
-                // check every dataset data's length is the same
-                //var testDataFirst = dataset[0].length;
-                //dataset.forEach(function(v)
-                //{
-                //    var result = (testDataFirst === v.length);
-                //    if (!result)
-                //    {
-                //        console.error("data's length not the same!");
-                //        return result
-                //    }
-                //    return result;
-                //});
-
                 // have a clone of origin data ready to use, DON'T change data by reference, be careful here.
                 originDataset = clone(data);
+
+                // validate x, y, category, alias, unit
+                if (!originDataset.x || !originDataset.y)
+                {
+                    throw new Error('Must have x and y data to draw the chart!');
+                }
+                originDatasetCategory      = originDataset.category ? originDataset.category : 'integer';
+                originDatasetAlias         = originDataset.alias ? originDataset.alias : [];
+                originDatasetUnit          = originDataset.unit ? originDataset.unit : [];
 
                 // Convert to result data model
                 dataset = convertDataFormat();
                 datasetLen = dataset.length;
 
-                // generate chart line colors
+                // todo: generate chart line colors. Right now it is 12 specific colors
                 // generateColors();
 
                 // Define main svg

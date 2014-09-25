@@ -299,7 +299,7 @@
                         '</table>';
                     tooltip.innerHTML = table;
                     var tooltipTh = tooltip.getElementsByTagName('th')[0];
-                    tooltipTh.innerHTML = xAtDotValue;
+                    tooltipTh.innerHTML = d3.time.format('%a %b %d %Y  %H:%M:%S')(xAtDotValue);
 
                     // set tooltip width & height
                     tooltipWidth = tooltip.offsetWidth;
@@ -394,7 +394,7 @@
                         .attr({
                             cx: function(d){return xScale(d.x)},
                             cy: function(d){return yScale(d.y)},
-                            r:  function(){return 4}
+                            r:  function(){return 3}
                         })
                         .attr('clip-path', 'url(#clip)');
 
@@ -403,7 +403,7 @@
                         .attr('class', 'focus-circle')
                         .attr('opacity', 0)
                         .attr({
-                            r: 6,
+                            r: 4,
                             fill: 'purple'
                         });
 

@@ -1,3 +1,17 @@
+.d3-chart-g .xaxis path,
+.d3-chart-g .yaxis path,
+.d3-chart-g .xaxis line,
+.d3-chart-g .yaxis line {
+  fill: none;
+  stroke: black;
+  stroke-width: 1;
+  shape-rendering: crispEdges;
+}
+.d3-chart-g .xaxis text,
+.d3-chart-g .yaxis text {
+  font-size: 12px;
+  text-anchor: middle;
+}
 .circle-dot {
   fill: #1e90ff;
 }
@@ -16,7 +30,8 @@
   text-align: left;
   color: #fff;
   padding: 2px 5px;
-  font-size: 14px;
+  font-size: 12px;
+  font-weight: 500;
 }
 .tooltip td {
   background-color: white;
@@ -26,9 +41,10 @@
   color: #222;
 }
 .tooltip td span {
-  width: 10px;
-  height: 10px;
+  width: 8px;
+  height: 8px;
   display: inline-block;
   background-color: dodgerblue;
   margin-right: 3px;
+  border-radius: 8px;
 }

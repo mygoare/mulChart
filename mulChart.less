@@ -1,6 +1,20 @@
 .d3-chart-g
 {
-
+  .xaxis, .yaxis
+  {
+    path, line
+    {
+      fill: none;
+      stroke: black;
+      stroke-width: 1;
+      shape-rendering: crispEdges;
+    }
+      text
+      {
+        font-size: 12px;
+        text-anchor: middle;
+      }
+  }
 }
 .circle-dot
 {
@@ -25,7 +39,8 @@
     text-align: left;
     color: #fff;
     padding: 2px 5px;
-    font-size: 14px;
+    font-size: 12px;
+    font-weight: 500;
   }
   td
   {
@@ -36,11 +51,12 @@
     color: #222;
     span
     {
-      width: 10px;
-      height: 10px;
+      width: 8px;
+      height: 8px;
       display: inline-block;
       background-color: dodgerblue;
       margin-right: 3px;
+      border-radius: 8px;
     }
   }
 }

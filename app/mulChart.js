@@ -35,8 +35,8 @@
              [2,3,4,3,34,5,6,3,2],
              [2,3,4,3,34,5,6,3,2]
              ],
-             alias: ['Light', 'Power', 'Battery', 'temperature'],
-             unit: []
+             alias: ['Light', 'Power', 'Pressure', 'Temperature'],
+             unit:  ['kelvin', 'watt', 'hpa', 'celsius']
              }
 
              Result data sample:
@@ -285,20 +285,23 @@
                     var tooltipTrs = '';
                     yAtDotValues.forEach(function(v, i)
                     {
-                        tooltipTrs += '<tr></tr><td><span style="background-color: '+color.pattern[i]+'"></span>'+originDataset.alias[i]+'</td><td>'+v+'</td></tr>';
+                        tooltipTrs += '<tr></tr><td><span style="background-color: '+color.pattern[i]+'"></span>'+originDataset.alias[i]+'</td><td>'+v+'</td><td>'+originDataset.unit[i]+'</td></tr>';
                     });
                     var table =
                         '<table>' +
                         '<tbody>' +
                         '<tr>' +
                         '<th colspan="2"></th>' +
+                        '<th colspan="1"></th>' +
                         '</tr>' +
                         tooltipTrs +
                         '</tbody>' +
                         '</table>';
                     tooltip.innerHTML = table;
-                    var tooltipTh = tooltip.getElementsByTagName('th')[0];
-                    tooltipTh.innerHTML = d3.time.format('%a %b %d %Y  %H:%M:%S')(xAtDotValue);
+                    var tooltipThDate = tooltip.getElementsByTagName('th')[0];
+                    var tooltipThTime = tooltip.getElementsByTagName('th')[1];
+                    tooltipThDate.innerHTML = d3.time.format('%a %b %d %Y')(xAtDotValue);
+                    tooltipThTime.innerHTML = d3.time.format('%H:%M:%S')(xAtDotValue);
 
                     // set tooltip width & height
                     tooltipWidth = tooltip.offsetWidth;

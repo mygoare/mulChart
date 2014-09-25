@@ -368,6 +368,14 @@
             {
                 for(var i = 0; i < datasetLen; i++)
                 {
+                    // draw each chart title
+                    svg.append('foreignObject')
+                        .attr('width', '100%')
+                        .attr('height', '20px')
+                        .attr('transform', 'translate('+margin.left+','+ (margin.top - 20 + i * (height + margin.top + margin.bottom) ) +')')
+                        .append('xhtml:body')
+                        .html('<p class="chart-title"><span class="icon" style="background-color: '+color.pattern[i]+'"></span>'+originDatasetAlias[i] + '<span class="unit">('+ originDatasetUnit[i] +')</span></p>');
+
                     var yScale = d3.scale.linear().domain(d3.extent(dataset[i], function(d){return d.y})).range([height, 0]);
 
                     var g = svg.append('g')
@@ -383,11 +391,14 @@
                         .attr('height', height + margin.top)
                         .attr('transform', 'translate(0, '+ (-margin.top) +')')
                         .attr('fill', 'none');
+
+                    // xAxis
                     graph.append('g')
                         .attr('class', 'xaxis')
                         .attr('transform', 'translate(0, '+ (height) +')')
                         .call(xAxis);
 
+                    // yAxis
                     var yAxis = d3.svg.axis()
                         .scale(yScale)
                         .orient('left');
@@ -395,6 +406,8 @@
                         .attr('class', 'yaxis')
                         .attr('transform', 'translate(0, 0)')
                         .call(yAxis);
+
+                    // line
                     var line = d3.svg.line()
                         .x(function(d){return xScale(d.x)})
                         .y(function(d){return yScale(d.y)})

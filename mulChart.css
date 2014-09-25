@@ -48,7 +48,21 @@
   width: 8px;
   height: 8px;
   display: inline-block;
-  background-color: dodgerblue;
   margin-right: 3px;
   border-radius: 8px;
+}
+.chart-title {
+  font-size: 12px;
+  line-height: 20px;
+}
+.chart-title span.icon {
+  width: 8px;
+  height: 8px;
+  display: inline-block;
+  border-radius: 8px;
+  margin-right: 3px;
+}
+.chart-title span.unit {
+  font-size: 10px;
+  margin-left: 3px;
 }

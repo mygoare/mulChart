@@ -1,6 +1,6 @@
 ### Example:
 
-![example](mulChart.gif)
+![example](http://trello-abc.stor.sinaapp.com/5424bc8f784b754b2e4bf303c0a2b1060e8d08e4687bd.gif)
 
 ### Why do this:
 
@@ -14,7 +14,7 @@ So this is what I want to solve in this repository.
 
 ### Data model
 
-Before start using the chart, you should organize your data which requested from server to the special Data model, after that you can bind it to the plugin.
+Before start using the chart, you should organize your data which requested from server to the specific Data model, after that you can bind it to the plugin.
 	
 	var data =
     	{

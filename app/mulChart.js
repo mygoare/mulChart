@@ -80,7 +80,7 @@
                     .append('svg')
                     .attr('class', 'd3-chart')
                     .attr('width', width + margin.left + margin.right)
-                    .attr('height', datasetLen * (height+margin.top+margin.bottom) - margin.bottom);
+                    .attr('height', datasetLen * (height+margin.top+margin.bottom) - margin.bottom);  // hide the last margin.bottom area, don't want to show vertical line
             };
             var drawTooltip = function()
             {

@@ -11,7 +11,7 @@
         // params
         var bindtoElement, data,
             size = {width: 960, height: 200},
-            margin = {top: 30, right: 10, bottom: 0, left: 30},
+            margin = {top: 20, right: 10, bottom: 10, left: 30},
             color =
             {
                 pattern: [
@@ -67,7 +67,8 @@
             var scaleOffsetLeftBottom = 25,
                 scaleOffsetRightTop   = 8;
 
-            var chartTitleHeight = 20;
+            // actually chart title height uses martin.top's gap
+            var chartTitleHeight = margin.top;
 
             // originDataset properties
             /*
@@ -387,7 +388,7 @@
                         .attr('transform', 'translate('+margin.left+','+ (margin.top - chartTitleHeight + i * (height + margin.top + margin.bottom) ) +')')
                         .append('xhtml:body')
                         .style('background', 'transparent')
-                        .html('<p class="chart-title"><span class="icon" style="background-color: '+color.pattern[i]+'"></span>'+(originDatasetAlias[i]?originDatasetAlias[i]: '') + '<span class="unit">'+ (originDatasetUnit[i]?originDatasetUnit[i]: '') +'</span></p>');
+                        .html('<p style="line-height: '+chartTitleHeight+'px" class="chart-title"><span class="icon" style="background-color: '+color.pattern[i]+'"></span>'+(originDatasetAlias[i]?originDatasetAlias[i]: '') + '<span class="unit">'+ (originDatasetUnit[i]?originDatasetUnit[i]: '') +'</span></p>');
 
                     var yScale = d3.scale.linear().domain(d3.extent(dataset[i], function(d){return d.y})).range([height - scaleOffsetLeftBottom, scaleOffsetRightTop]);
 

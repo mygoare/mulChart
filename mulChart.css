@@ -55,6 +55,9 @@
   font-size: 12px;
   line-height: 20px;
   background-color: #B5B5B5;
+  padding-left: 10px;
+  color: white;
+  font-weight: 500;
 }
 .chart-title span.icon {
   width: 8px;

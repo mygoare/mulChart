@@ -11,7 +11,7 @@
         // params
         var bindtoElement, data,
             size = {width: 960, height: 200},
-            margin = {top: 20, right: 10, bottom: 30, left: 30},
+            margin = {top: 30, right: 10, bottom: 0, left: 30},
             color =
             {
                 pattern: [
@@ -64,6 +64,11 @@
             var originDataset, dataset, datasetLen;
             var xScale, xAxis;
 
+            var scaleOffsetLeftBottom = 25,
+                scaleOffsetRightTop   = 8;
+
+            var chartTitleHeight = 20;
+
             // originDataset properties
             /*
                 category: date, integer
@@ -112,7 +117,7 @@
                     xScale = d3.scale.linear()
                 }
 
-                xScale.domain(d3.extent(originDataset.x, function(d){return d})).range([20, width]);
+                xScale.domain(d3.extent(originDataset.x, function(d){return d})).range([scaleOffsetLeftBottom, width - scaleOffsetRightTop]);
                 xAxis = d3.svg.axis()
                     .tickSize(0)
                     .innerTickSize(6)
@@ -378,13 +383,13 @@
                     // draw each chart title
                     svg.append('foreignObject')
                         .attr('width', width)
-                        .attr('height', '20px')
-                        .attr('transform', 'translate('+margin.left+','+ (margin.top - 20 + i * (height + margin.top + margin.bottom) ) +')')
+                        .attr('height', chartTitleHeight + 'px')
+                        .attr('transform', 'translate('+margin.left+','+ (margin.top - chartTitleHeight + i * (height + margin.top + margin.bottom) ) +')')
                         .append('xhtml:body')
                         .style('background', 'transparent')
                         .html('<p class="chart-title"><span class="icon" style="background-color: '+color.pattern[i]+'"></span>'+(originDatasetAlias[i]?originDatasetAlias[i]: '') + '<span class="unit">'+ (originDatasetUnit[i]?originDatasetUnit[i]: '') +'</span></p>');
 
-                    var yScale = d3.scale.linear().domain(d3.extent(dataset[i], function(d){return d.y})).range([height - 20, 0]);
+                    var yScale = d3.scale.linear().domain(d3.extent(dataset[i], function(d){return d.y})).range([height - scaleOffsetLeftBottom, scaleOffsetRightTop]);
 
                     var g = svg.append('g')
                         .attr('class', 'g'+i+' d3-chart-g')
@@ -410,7 +415,7 @@
                     var yAxis = d3.svg.axis()
                         .scale(yScale)
                         .tickSize(0)
-                        .innerTickSize(6)
+                        .innerTickSize(8)
                         .orient('right');
                     graph.append('g')
                         .attr('class', 'yaxis')
@@ -421,7 +426,7 @@
                     var line = d3.svg.line()
                         .x(function(d){return xScale(d.x)})
                         .y(function(d){return yScale(d.y)})
-                        .interpolate('step');
+                        .interpolate('linear');
                     var mainLine = graph.append('path')
                         .attr('d', line(dataset[i]))
                         .attr('stroke', color.pattern[i])
@@ -465,6 +470,29 @@
                     circles.push(circle);
                     mainLines.push(mainLine);
                     yScales.push(yScale);
+
+                    // draw borders
+                    var leftBorder = graph.append('line')
+                        .attr('x1', 0 + 2)
+                        .attr('y1', 0)
+                        .attr('x2', 0 + 2)
+                        .attr('y2', height)
+                        .attr('stroke-width', 4)
+                        .attr('stroke', '#b5b5b5');
+                    var bottomBorder = graph.append('line')
+                        .attr('x1', 0)
+                        .attr('y1', height -1)
+                        .attr('x2', width)
+                        .attr('y2', height -1)
+                        .attr('stroke-width', 4)
+                        .attr('stroke', '#b5b5b5');
+                    var rightBorder = graph.append('line')
+                        .attr('x1', width - 1)
+                        .attr('y1', 0)
+                        .attr('x2', width - 1)
+                        .attr('y2', height)
+                        .attr('stroke-width', 2)
+                        .attr('stroke', '#b5b5b5');
                 }
             };
 

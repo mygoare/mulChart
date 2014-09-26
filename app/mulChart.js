@@ -2,7 +2,7 @@
 {
     var mulChart = {};
 
-    mulChart.version = '0.1.0';
+    mulChart.version = '0.1.1';
 
     mulChart.generate = function(config)
     {

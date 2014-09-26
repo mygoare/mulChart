@@ -11,7 +11,7 @@
         // params
         var bindtoElement, data,
             size = {width: 960, height: 200},
-            margin = {top: 20, right: 10, bottom: 30, left: 40},
+            margin = {top: 20, right: 10, bottom: 30, left: 30},
             color =
             {
                 pattern: [
@@ -80,7 +80,7 @@
                     .append('svg')
                     .attr('class', 'd3-chart')
                     .attr('width', width + margin.left + margin.right)
-                    .attr('height', datasetLen * (height+margin.top+margin.bottom));
+                    .attr('height', datasetLen * (height+margin.top+margin.bottom) - margin.bottom);
             };
             var drawTooltip = function()
             {
@@ -112,9 +112,12 @@
                     xScale = d3.scale.linear()
                 }
 
-                xScale.domain(d3.extent(originDataset.x, function(d){return d})).range([0, width]);
+                xScale.domain(d3.extent(originDataset.x, function(d){return d})).range([20, width]);
                 xAxis = d3.svg.axis()
-                    .scale(xScale);
+                    .tickSize(0)
+                    .innerTickSize(6)
+                    .scale(xScale)
+                    .orient('top');
             };
 
             // Convert originData to resultData function
@@ -164,7 +167,7 @@
             };
 
             // Mouse move binding function
-            var mouseMoveFun = function()
+            var mouseMoveFun = function(index)
             {
                 var self = this.node();
                 var mouseX = d3.mouse(self)[0],
@@ -331,7 +334,7 @@
 
                     // set tooltip position
                     var tooltipX = verticalLineX + margin.left + tooltipMargin.left,
-                        tooltipY = mouseY + margin.top  + tooltipMargin.top + arguments[0] * (height + margin.top + margin.bottom),
+                        tooltipY = mouseY + margin.top  + tooltipMargin.top + index * (height + margin.top + margin.bottom),
                         svgWidth = svg.node().offsetWidth,
                         svgHeight = svg.node().offsetHeight;
                     if ((tooltipX + tooltipWidth + tooltipMargin.right) > svgWidth)
@@ -340,7 +343,7 @@
                     }
                     if ((tooltipY + tooltipHeight + tooltipMargin.top) > svgHeight)
                     {
-                        tooltipY = mouseY + margin.top - (tooltipMargin.bottom + tooltipHeight) + arguments[0] * (height + margin.top + margin.bottom);
+                        tooltipY = mouseY + margin.top - (tooltipMargin.bottom + tooltipHeight) + index * (height + margin.top + margin.bottom);
                     }
                     tooltip.style.opacity = 0.9;
                     tooltip.style.left = tooltipX + 'px';
@@ -374,14 +377,14 @@
                 {
                     // draw each chart title
                     svg.append('foreignObject')
-                        .attr('width', '100%')
+                        .attr('width', width)
                         .attr('height', '20px')
                         .attr('transform', 'translate('+margin.left+','+ (margin.top - 20 + i * (height + margin.top + margin.bottom) ) +')')
                         .append('xhtml:body')
                         .style('background', 'transparent')
                         .html('<p class="chart-title"><span class="icon" style="background-color: '+color.pattern[i]+'"></span>'+(originDatasetAlias[i]?originDatasetAlias[i]: '') + '<span class="unit">'+ (originDatasetUnit[i]?originDatasetUnit[i]: '') +'</span></p>');
 
-                    var yScale = d3.scale.linear().domain(d3.extent(dataset[i], function(d){return d.y})).range([height, 0]);
+                    var yScale = d3.scale.linear().domain(d3.extent(dataset[i], function(d){return d.y})).range([height - 20, 0]);
 
                     var g = svg.append('g')
                         .attr('class', 'g'+i+' d3-chart-g')
@@ -392,9 +395,9 @@
                     graph.append('clipPath')
                         .attr('id', 'clip')
                         .append('rect')
-                        .attr('width', width + margin.right)
-                        .attr('height', height + margin.top)
-                        .attr('transform', 'translate(0, '+ (-margin.top) +')')
+                        .attr('width', width)
+                        .attr('height', height)
+                        .attr('transform', 'translate(0, 0)')
                         .attr('fill', 'none');
 
                     // xAxis
@@ -406,7 +409,9 @@
                     // yAxis
                     var yAxis = d3.svg.axis()
                         .scale(yScale)
-                        .orient('left');
+                        .tickSize(0)
+                        .innerTickSize(6)
+                        .orient('right');
                     graph.append('g')
                         .attr('class', 'yaxis')
                         .attr('transform', 'translate(0, 0)')

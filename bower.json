@@ -1,0 +1,33 @@
+{
+  "name": "mulChart",
+  "version": "0.1.1",
+  "homepage": "https://github.com/mygoare/mulChart",
+  "authors": [
+    "mygoare <mygoare@gmail.com>"
+  ],
+  "description": "A library based on D3, generate multiple charts which use common X-axis",
+  "main": [
+    "app/mulChart.js",
+    "mulChart.css"
+  ],
+  "moduleType": [
+    "amd"
+  ],
+  "keywords": [
+    "d3",
+    "d3js",
+    "chart",
+    "mulChart"
+  ],
+  "license": "MIT",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "d3": "~3.4.11"
+  }
+}

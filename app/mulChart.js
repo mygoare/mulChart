@@ -8,7 +8,7 @@
     {
         var d3 = window.d3 ? window.d3 : 'undefined' !== typeof require ? require("d3") : undefined;
 
-        // params
+        // params can control by outside
         var bindtoElement, data,
             size = {width: 960, height: 200},
             margin = {top: 20, right: 10, bottom: 10, left: 30},
@@ -20,7 +20,8 @@
                     '#99FF00', '#CC0000', '#CCFF00', '#FF0000', '#FF3300', '#FF6600', '#FF9900', '#FFCC00', '#FFFF00'
                 ]
             },
-            d3Selection;
+            d3Selection,
+            zoom;
 
         var self;
 
@@ -80,7 +81,8 @@
 
             var bindOnZoomArr = [], graphes = [], rects = [], circles = [], mainLines = [], yScales = [];
 
-            var bindZoom;
+            var zoomTranslate,
+                zoomScale;
 
             // Convert originData to resultData function
             var convertDataFormat = function()
@@ -232,7 +234,7 @@
                         .attr('cursor', 'move');
 
 
-                    bindZoom.on('zoom.g' +i, onZoomFun(i, graph, xAxis, mainLine, line, yScale));
+                    zoom.on('zoom.g' +i, onZoomFun(i, graph, xAxis, mainLine, line, yScale));
                     graphes.push(graph);
                     rects.push(rect);
                     circles.push(circle);
@@ -293,7 +295,7 @@
                             cy: function(d){return yScale(d.y)}
                         });
 
-                    console.log('xxxxxxxx', bindZoom.translate(), bindZoom.scale());
+                    console.log('xxxxxxxx', zoom.translate(), zoom.scale());
                 };
             };
             // Mouse move binding function
@@ -515,10 +517,10 @@
                  graph2.call(zoom);
 
                  */
-                // after bindZoom.on('zoom') all ready, then call it.
+                // after zoom.on('zoom') all ready, then call it.
                 graphes.forEach(function(v)
                 {
-                    v.call(bindZoom);
+                    v.call(zoom);
                 });
             };
             var mouseMoveBind = function()
@@ -560,10 +562,14 @@
                 // Define Common xScale & xAxis (x is common)
                 defineCommonX();
 
-                // Define bindZoom, then bindZoom will listen on 'zoom' event when drawCharts
-                bindZoom = d3.behavior.zoom()
+                // Define zoom, then zoom will listen on 'zoom' event when drawCharts
+                zoom = d3.behavior.zoom()
                     .x(xScale)
                     .scaleExtent([1, Infinity]);
+                zoomTranslate = zoom.translate();
+                zoomScale = zoom.scale();
+                zoom.translate(zoomTranslate)
+                    .scale(zoomScale);
 
                 // Draw charts using data
                 drawCharts.call(this);
@@ -635,6 +641,30 @@
 
             return chart;
         };
+        chart.zoomTranslate = function(arr)
+        {
+            if (!arguments.length)
+                return zoom.translate();
+
+            if (Array.isArray(arr))
+            {
+                zoom.translate(arr);
+            }
+
+            return chart;
+        };
+        chart.zoomScale = function(num)
+        {
+            if (!arguments.length)
+                return zoom.scale();
+
+            if (num > 1)
+            {
+                zoom.scale(num);
+            }
+
+            return chart;
+        };
 
         chart.selection = function()
         {
@@ -667,7 +697,10 @@
 
             this.destroy()
                 .selection()
+                .zoomScale(2)
                 .call(this);
+
+            console.log('xxxxxxxx', this.zoomScale());
 
         };
         chart.destroy = function()

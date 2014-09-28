@@ -99,7 +99,7 @@ Or like writting d3:
 - [x] 添加 AMD , CommonJS支持
 - [x] 每单个表格名称、单位、颜色标识
 - [ ] 统一样式模版，便于创造出更多theme
-- [ ] brower install
+- [x] brower install mul-chart
 - [ ] node module (browerify)
 
 ### License

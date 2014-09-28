@@ -80,6 +80,31 @@
 
             var bindOnZoomArr = [], graphes = [], rects = [], circles = [], mainLines = [], yScales = [];
 
+            var bindZoom;
+
+            // Convert originData to resultData function
+            var convertDataFormat = function()
+            {
+                var xData = originDataset.x,
+                    yData = originDataset.y,
+                    xDataLen = xData.length,
+                    yDataLen = yData.length;
+
+                for (var i = 0; i < yDataLen; i++)
+                {
+                    var eachOriginData = yData[i];
+                    eachOriginData.forEach(function(v, i)
+                    {
+                        var obj = {};
+                        obj['x'] = xData[i];
+                        obj['y'] = v;
+                        eachOriginData[i] = obj;
+                    });
+                }
+
+                return yData;
+            };
+
             var defineSvg = function()
             {
                 svg = d3.select(this)  // `this` is the html selection
@@ -87,13 +112,6 @@
                     .attr('class', 'd3-chart')
                     .attr('width', width + margin.left + margin.right)
                     .attr('height', datasetLen * (height+margin.top+margin.bottom) - margin.bottom);  // hide the last margin.bottom area, don't want to show vertical line
-            };
-            var drawTooltip = function()
-            {
-                var htmlContainer = this;
-                tooltip = document.createElement('div');
-                tooltip.className = 'tooltip';
-                htmlContainer.appendChild(tooltip);
             };
             var drawVerticalLine = function()
             {
@@ -126,28 +144,134 @@
                     .orient('top');
             };
 
-            // Convert originData to resultData function
-            var convertDataFormat = function()
+            var drawCharts = function()
             {
-                var xData = originDataset.x,
-                    yData = originDataset.y,
-                    xDataLen = xData.length,
-                    yDataLen = yData.length;
-
-                for (var i = 0; i < yDataLen; i++)
+                for(var i = 0; i < datasetLen; i++)
                 {
-                    var eachOriginData = yData[i];
-                    eachOriginData.forEach(function(v, i)
-                    {
-                        var obj = {};
-                        obj['x'] = xData[i];
-                        obj['y'] = v;
-                        eachOriginData[i] = obj;
-                    });
-                }
+                    // draw each chart title
+                    svg.append('foreignObject')
+                        .attr('width', width)
+                        .attr('height', chartTitleHeight + 'px')
+                        .attr('transform', 'translate('+margin.left+','+ (margin.top - chartTitleHeight + i * (height + margin.top + margin.bottom) ) +')')
+                        .append('xhtml:body')
+                        .style('background', 'transparent')
+                        .html('<p style="line-height: '+chartTitleHeight+'px" class="chart-title"><span class="icon" style="background-color: '+color.pattern[i]+'"></span>'+(originDatasetAlias[i]?originDatasetAlias[i]: '') + '<span class="unit">'+ (originDatasetUnit[i]?originDatasetUnit[i]: '') +'</span></p>');
 
-                return yData;
+                    var yScale = d3.scale.linear().domain(d3.extent(dataset[i], function(d){return d.y})).range([height - scaleOffsetLeftBottom, scaleOffsetRightTop]);
+
+                    var g = svg.append('g')
+                        .attr('class', 'g'+i+' d3-chart-g')
+                        .attr('transform', 'translate('+margin.left+','+ (margin.top + i * (height + margin.top + margin.bottom) ) +')');
+
+                    var graph = d3.select(this)
+                        .select('.g'+i);
+                    graph.append('clipPath')
+                        .attr('id', 'clip')
+                        .append('rect')
+                        .attr('width', width)
+                        .attr('height', height)
+                        .attr('transform', 'translate(0, 0)')
+                        .attr('fill', 'none');
+
+                    // xAxis
+                    graph.append('g')
+                        .attr('class', 'xaxis')
+                        .attr('transform', 'translate(0, '+ (height) +')')
+                        .call(xAxis);
+
+                    // yAxis
+                    var yAxis = d3.svg.axis()
+                        .scale(yScale)
+                        .tickSize(0)
+                        .innerTickSize(8)
+                        .orient('right');
+                    graph.append('g')
+                        .attr('class', 'yaxis')
+                        .attr('transform', 'translate(0, 0)')
+                        .call(yAxis);
+
+                    // line
+                    var line = d3.svg.line()
+                        .x(function(d){return xScale(d.x)})
+                        .y(function(d){return yScale(d.y)})
+                        .interpolate('linear');
+                    var mainLine = graph.append('path')
+                        .attr('d', line(dataset[i]))
+                        .attr('stroke', color.pattern[i])
+                        .attr('fill', 'none')
+                        .attr('clip-path', 'url(#clip)');
+
+                    // draw each chart circles
+                    graph.selectAll('circle')
+                        .data(dataset[i])
+                        .enter()
+                        .append('circle')
+                        .attr('class', 'circle-dot')
+                        .attr({
+                            cx: function(d){return xScale(d.x)},
+                            cy: function(d){return yScale(d.y)},
+                            r:  function(){return 3}
+                        })
+                        .attr('clip-path', 'url(#clip)');
+
+                    // hover focus circle dot
+                    var circle = graph.append('circle')
+                        .attr('class', 'focus-circle')
+                        .attr('opacity', 0)
+                        .attr({
+                            r: 4,
+                            fill: 'purple'
+                        });
+
+                    var rect = graph.append('rect')
+                        .attr('x', 0)
+                        .attr('y', 0)
+                        .attr('width', width)
+                        .attr('height', height)
+                        .attr('fill', 'transparent')
+                        .attr('cursor', 'move');
+
+
+                    bindZoom.on('zoom.g' +i, onZoomFun(i, graph, xAxis, mainLine, line, yScale));
+                    graphes.push(graph);
+                    rects.push(rect);
+                    circles.push(circle);
+                    mainLines.push(mainLine);
+                    yScales.push(yScale);
+
+                    // draw borders
+                    var leftBorder = graph.append('line')
+                        .attr('x1', 0 + 2)
+                        .attr('y1', 0)
+                        .attr('x2', 0 + 2)
+                        .attr('y2', height)
+                        .attr('stroke-width', 4)
+                        .attr('stroke', '#b5b5b5');
+                    var bottomBorder = graph.append('line')
+                        .attr('x1', 0)
+                        .attr('y1', height -1)
+                        .attr('x2', width)
+                        .attr('y2', height -1)
+                        .attr('stroke-width', 4)
+                        .attr('stroke', '#b5b5b5');
+                    var rightBorder = graph.append('line')
+                        .attr('x1', width - 1)
+                        .attr('y1', 0)
+                        .attr('x2', width - 1)
+                        .attr('y2', height)
+                        .attr('stroke-width', 2)
+                        .attr('stroke', '#b5b5b5');
+                }
             };
+
+            var drawTooltip = function()
+            {
+                var htmlContainer = this;
+                tooltip = document.createElement('div');
+                tooltip.className = 'tooltip';
+                htmlContainer.appendChild(tooltip);
+            };
+
 
             // Zoom binding function
             var onZoomFun = function(i, graph, xAxis, mainLine, line, yScale)
@@ -169,9 +293,9 @@
                             cy: function(d){return yScale(d.y)}
                         });
 
+                    console.log('xxxxxxxx', bindZoom.translate(), bindZoom.scale());
                 };
             };
-
             // Mouse move binding function
             var mouseMoveFun = function(index)
             {
@@ -366,7 +490,6 @@
                 }
 
             };
-
             var mouseOutFun = function()
             {
                 verticalLine.attr('opacity', 0);
@@ -375,126 +498,6 @@
                     v.attr('opacity', 0);
                 });
                 tooltip.style.opacity = 0;
-            };
-
-            var drawCharts = function()
-            {
-                for(var i = 0; i < datasetLen; i++)
-                {
-                    // draw each chart title
-                    svg.append('foreignObject')
-                        .attr('width', width)
-                        .attr('height', chartTitleHeight + 'px')
-                        .attr('transform', 'translate('+margin.left+','+ (margin.top - chartTitleHeight + i * (height + margin.top + margin.bottom) ) +')')
-                        .append('xhtml:body')
-                        .style('background', 'transparent')
-                        .html('<p style="line-height: '+chartTitleHeight+'px" class="chart-title"><span class="icon" style="background-color: '+color.pattern[i]+'"></span>'+(originDatasetAlias[i]?originDatasetAlias[i]: '') + '<span class="unit">'+ (originDatasetUnit[i]?originDatasetUnit[i]: '') +'</span></p>');
-
-                    var yScale = d3.scale.linear().domain(d3.extent(dataset[i], function(d){return d.y})).range([height - scaleOffsetLeftBottom, scaleOffsetRightTop]);
-
-                    var g = svg.append('g')
-                        .attr('class', 'g'+i+' d3-chart-g')
-                        .attr('transform', 'translate('+margin.left+','+ (margin.top + i * (height + margin.top + margin.bottom) ) +')');
-
-                    var graph = d3.select(this)
-                        .select('.g'+i);
-                    graph.append('clipPath')
-                        .attr('id', 'clip')
-                        .append('rect')
-                        .attr('width', width)
-                        .attr('height', height)
-                        .attr('transform', 'translate(0, 0)')
-                        .attr('fill', 'none');
-
-                    // xAxis
-                    graph.append('g')
-                        .attr('class', 'xaxis')
-                        .attr('transform', 'translate(0, '+ (height) +')')
-                        .call(xAxis);
-
-                    // yAxis
-                    var yAxis = d3.svg.axis()
-                        .scale(yScale)
-                        .tickSize(0)
-                        .innerTickSize(8)
-                        .orient('right');
-                    graph.append('g')
-                        .attr('class', 'yaxis')
-                        .attr('transform', 'translate(0, 0)')
-                        .call(yAxis);
-
-                    // line
-                    var line = d3.svg.line()
-                        .x(function(d){return xScale(d.x)})
-                        .y(function(d){return yScale(d.y)})
-                        .interpolate('linear');
-                    var mainLine = graph.append('path')
-                        .attr('d', line(dataset[i]))
-                        .attr('stroke', color.pattern[i])
-                        .attr('fill', 'none')
-                        .attr('clip-path', 'url(#clip)');
-
-                    // draw each chart circles
-                    graph.selectAll('circle')
-                        .data(dataset[i])
-                        .enter()
-                        .append('circle')
-                        .attr('class', 'circle-dot')
-                        .attr({
-                            cx: function(d){return xScale(d.x)},
-                            cy: function(d){return yScale(d.y)},
-                            r:  function(){return 3}
-                        })
-                        .attr('clip-path', 'url(#clip)');
-
-                    // hover focus circle dot
-                    var circle = graph.append('circle')
-                        .attr('class', 'focus-circle')
-                        .attr('opacity', 0)
-                        .attr({
-                            r: 4,
-                            fill: 'purple'
-                        });
-
-                    var rect = graph.append('rect')
-                        .attr('x', 0)
-                        .attr('y', 0)
-                        .attr('width', width)
-                        .attr('height', height)
-                        .attr('fill', 'transparent')
-                        .attr('cursor', 'move');
-
-
-                    bindOnZoomArr.push(onZoomFun(i, graph, xAxis, mainLine, line, yScale));
-                    graphes.push(graph);
-                    rects.push(rect);
-                    circles.push(circle);
-                    mainLines.push(mainLine);
-                    yScales.push(yScale);
-
-                    // draw borders
-                    var leftBorder = graph.append('line')
-                        .attr('x1', 0 + 2)
-                        .attr('y1', 0)
-                        .attr('x2', 0 + 2)
-                        .attr('y2', height)
-                        .attr('stroke-width', 4)
-                        .attr('stroke', '#b5b5b5');
-                    var bottomBorder = graph.append('line')
-                        .attr('x1', 0)
-                        .attr('y1', height -1)
-                        .attr('x2', width)
-                        .attr('y2', height -1)
-                        .attr('stroke-width', 4)
-                        .attr('stroke', '#b5b5b5');
-                    var rightBorder = graph.append('line')
-                        .attr('x1', width - 1)
-                        .attr('y1', 0)
-                        .attr('x2', width - 1)
-                        .attr('y2', height)
-                        .attr('stroke-width', 2)
-                        .attr('stroke', '#b5b5b5');
-                }
             };
 
             var zoomBind = function()
@@ -512,20 +515,12 @@
                  graph2.call(zoom);
 
                  */
-                var zoom = d3.behavior.zoom()
-                    .x(xScale)
-                    .scaleExtent([1, Infinity]);
-                bindOnZoomArr.forEach(function(v, i)
-                {
-                    zoom.on('zoom.g'+i, v);
-                });
-                // after zoom.on('zoom') all ready, then call it.
+                // after bindZoom.on('zoom') all ready, then call it.
                 graphes.forEach(function(v)
                 {
-                    v.call(zoom);
+                    v.call(bindZoom);
                 });
             };
-
             var mouseMoveBind = function()
             {
                 rects.forEach(function(o, index)
@@ -564,6 +559,11 @@
 
                 // Define Common xScale & xAxis (x is common)
                 defineCommonX();
+
+                // Define bindZoom, then bindZoom will listen on 'zoom' event when drawCharts
+                bindZoom = d3.behavior.zoom()
+                    .x(xScale)
+                    .scaleExtent([1, Infinity]);
 
                 // Draw charts using data
                 drawCharts.call(this);

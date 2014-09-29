@@ -563,13 +563,29 @@
                 defineCommonX();
 
                 // Define zoom, then zoom will listen on 'zoom' event when drawCharts
+                try
+                {
+                    zoomTranslate = zoom.translate();
+                }
+                catch (e)
+                {
+                    zoomTranslate = [0,0];
+                }
+                try
+                {
+                    zoomScale = zoom.scale();
+                }
+                catch (e)
+                {
+                    zoomScale = 1;
+                }
                 zoom = d3.behavior.zoom()
                     .x(xScale)
-                    .scaleExtent([1, Infinity]);
-                zoomTranslate = zoom.translate();
-                zoomScale = zoom.scale();
-                zoom.translate(zoomTranslate)
+                    .scaleExtent([1, Infinity])
+                    .translate(zoomTranslate)
                     .scale(zoomScale);
+
+                console.log('xxxxx', zoomTranslate, zoomScale);
 
                 // Draw charts using data
                 drawCharts.call(this);
@@ -692,16 +708,20 @@
                 {
                     this.color(config.color);
                 }
+                if (config.zoomScale)
+                {
+                    zoom.scale(config.zoomScale)
+                }
+                if (config.zoomTranslate)
+                {
+                    zoom.translate(config.zoomTranslate)
+                }
             }
             bindElementWithData(bindtoElement, data);
 
             this.destroy()
                 .selection()
-                .zoomScale(2)
                 .call(this);
-
-            console.log('xxxxxxxx', this.zoomScale());
-
         };
         chart.destroy = function()
         {

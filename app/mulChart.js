@@ -295,7 +295,7 @@
                             cy: function(d){return yScale(d.y)}
                         });
 
-                    console.log('xxxxxxxx', zoom.translate(), zoom.scale());
+                    console.log('xxxxxxxx', zoom.translate(), zoom.scale(), xScale.domain());
                 };
             };
             // Mouse move binding function
@@ -584,8 +584,6 @@
                     .scaleExtent([1, Infinity])
                     .translate(zoomTranslate)
                     .scale(zoomScale);
-
-                console.log('xxxxx', zoomTranslate, zoomScale);
 
                 // Draw charts using data
                 drawCharts.call(this);

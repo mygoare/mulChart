@@ -21,7 +21,8 @@
                 ]
             },
             d3Selection,
-            zoom;
+            zoomTranslate = [0, 0],
+            zoomScale = 1;
 
         var self;
 
@@ -81,8 +82,7 @@
 
             var bindOnZoomArr = [], graphes = [], rects = [], circles = [], mainLines = [], yScales = [];
 
-            var zoomTranslate,
-                zoomScale;
+            var zoom;
 
             // Convert originData to resultData function
             var convertDataFormat = function()
@@ -563,22 +563,6 @@
                 defineCommonX();
 
                 // Define zoom, then zoom will listen on 'zoom' event when drawCharts
-                try
-                {
-                    zoomTranslate = zoom.translate();
-                }
-                catch (e)
-                {
-                    zoomTranslate = [0,0];
-                }
-                try
-                {
-                    zoomScale = zoom.scale();
-                }
-                catch (e)
-                {
-                    zoomScale = 1;
-                }
                 zoom = d3.behavior.zoom()
                     .x(xScale)
                     .scaleExtent([1, Infinity])
@@ -658,11 +642,11 @@
         chart.zoomTranslate = function(arr)
         {
             if (!arguments.length)
-                return zoom.translate();
+                return zoomTranslate;
 
             if (Array.isArray(arr))
             {
-                zoom.translate(arr);
+                zoomTranslate = arr;
             }
 
             return chart;
@@ -670,11 +654,11 @@
         chart.zoomScale = function(num)
         {
             if (!arguments.length)
-                return zoom.scale();
+                return zoomScale;
 
             if (num > 1)
             {
-                zoom.scale(num);
+                zoomScale = num;
             }
 
             return chart;
@@ -708,11 +692,11 @@
                 }
                 if (config.zoomScale)
                 {
-                    zoom.scale(config.zoomScale)
+                    zoomScale = config.zoomScale
                 }
                 if (config.zoomTranslate)
                 {
-                    zoom.translate(config.zoomTranslate)
+                    zoomTranslate = config.zoomTranslate
                 }
             }
             bindElementWithData(bindtoElement, data);
@@ -805,6 +789,14 @@
         if (config.color)
         {
             chart.color(config.color);
+        }
+        if (config.zoomTranslate)
+        {
+            chart.zoomTranslate(config.zoomTranslate);
+        }
+        if (config.zoomScale)
+        {
+            chart.zoomScale(config.zoomScale);
         }
 
         bindElementWithData(bindtoElement, data);

@@ -138,6 +138,7 @@
                     xScale = d3.scale.linear()
                 }
 
+                // x axis domain & range setting
                 xScale.domain(d3.extent(originDataset.x, function(d){return d})).range([scaleOffsetLeftBottom, width - scaleOffsetRightTop]);
                 xAxis = d3.svg.axis()
                     .tickSize(0)

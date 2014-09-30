@@ -281,6 +281,10 @@
             {
                 return function()
                 {
+                    if (xScale.domain()[0] < 0)
+                    {
+                        return;
+                    }
                     // xaxis redraw
                     graph.select('.xaxis').call(xAxis);
 
@@ -296,7 +300,7 @@
                             cy: function(d){return yScale(d.y)}
                         });
 
-                    console.log('xxxxxxxx', zoom.translate(), zoom.scale(), xScale.domain());
+                    console.log('xxxxxxxx', xScale.domain());
                 };
             };
             // Mouse move binding function

@@ -24,6 +24,8 @@
             zoomTranslate = [0, 0],
             zoomScale = 1;
 
+        var zoomCallback, zoomCallbackSetTimeout;
+
         var self;
 
         var chart = function(selection)
@@ -282,8 +284,9 @@
                 {
                     if (xScale.domain()[0] < 0)
                     {
-                        return;
+                        return
                     }
+
                     // xaxis redraw
                     graph.select('.xaxis').call(xAxis);
 
@@ -299,7 +302,21 @@
                             cy: function(d){return yScale(d.y)}
                         });
 
-                    console.log('xxxxxxxx', xScale.domain());
+
+                    //run only once
+                    if (i == datasetLen - 1)
+                    {
+                        clearTimeout(zoomCallbackSetTimeout);
+                        zoomCallbackSetTimeout = setTimeout(function()
+                        {
+                            console.log('xxxxxxxx', xScale.domain(), i);
+
+                            //callback function to redraw the chart based on xScale.domain()
+                            //zoomCallback(i, graph, xAxis, mainLine, line, yScale);
+
+                        }, 500);
+                    }
+
                 };
             };
             // Mouse move binding function
@@ -800,6 +817,11 @@
         if (config.zoomScale)
         {
             chart.zoomScale(config.zoomScale);
+        }
+
+        if (config.zoomCallback)
+        {
+            zoomCallback = config.zoomCallback;
         }
 
         bindElementWithData(bindtoElement, data);

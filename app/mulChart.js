@@ -2,7 +2,7 @@
 {
     var mulChart = {};
 
-    mulChart.version = '0.1.1';
+    mulChart.version = '0.1.2';
 
     mulChart.generate = function(config)
     {
@@ -32,7 +32,6 @@
             /*
              Origin data sample:
              {
-             todo: add category, alias, unit etc.
              category: 'date',   // or integer
              x: [1, 3, 5, 7, 9, 11, 13, 15, 29], // probably timestamps
              y: [
@@ -538,7 +537,7 @@
             };
 
 
-            var dealWithSelection = function(data, index)
+            var processSelection = function(data, index)
             {
                 // have a clone of origin data ready to use, DON'T change data by reference, be careful here.
                 originDataset = clone(data);
@@ -556,7 +555,7 @@
                 dataset = convertDataFormat();
                 datasetLen = dataset.length;
 
-                // todo: generate chart line colors. Right now it is 12 specific colors
+                // todo: generate chart line colors. Right now it is 29 specific colors
                 // generateColors();
 
                 // Define main svg
@@ -586,7 +585,7 @@
             var originDataSelection = selection;
             self = originDataSelection.node();
             originDataSelection.node().style.position = 'relative';
-            originDataSelection.each(dealWithSelection);
+            originDataSelection.each(processSelection);
         };
 
         // Properties:  bindto, data, size, color
@@ -720,7 +719,8 @@
 
         // clone object without reference
         // http://stackoverflow.com/questions/728360/most-elegant-way-to-clone-a-javascript-object
-        function clone(obj) {
+        function clone(obj)
+        {
             var copy;
 
             // Handle the 3 simple types, and null or undefined
@@ -753,14 +753,12 @@
 
             throw new Error("Unable to copy obj! Its type isn't supported.");
         }
-
         function convertHtmlToDomElementObject(s)
         {
             var el = document.createElement('div');
             el.innerHTML = s;
             return el.childNodes[0];
         }
-
         function bindElementWithData(bindto, data)
         {
             if (!!bindto && !!data && typeof data === 'object')

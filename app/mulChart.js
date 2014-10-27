@@ -307,14 +307,15 @@
                     if (i == datasetLen - 1)
                     {
                         clearTimeout(zoomCallbackSetTimeout);
-                        zoomCallbackSetTimeout = setTimeout(function()
+                        zoomCallback = function()
                         {
                             console.log('xxxxxxxx', xScale.domain(), i);
 
                             //callback function to redraw the chart based on xScale.domain()
                             //zoomCallback(i, graph, xAxis, mainLine, line, yScale);
 
-                        }, 500);
+                        };
+                        zoomCallbackSetTimeout = setTimeout(zoomCallback, 500);
                     }
 
                 };

@@ -303,11 +303,12 @@
                         });
 
 
+                    var zoomCallbackTimer = 1000;
                     //run only once
                     if (i == datasetLen - 1)
                     {
                         clearTimeout(zoomCallbackSetTimeout);
-                        zoomCallbackSetTimeout = setTimeout(zoomCallback.bind(self), 500); // self is the html dom element of chart wrapper
+                        zoomCallbackSetTimeout = setTimeout(zoomCallback.bind(self), zoomCallbackTimer); // self is the html dom element of chart wrapper
                     }
 
                 };

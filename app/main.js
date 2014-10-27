@@ -34,6 +34,10 @@ define(['d3', './mulChart'], function(d3, mulChart)
             color:
             {
                 pattern: ['red', 'orange', 'gray', 'yellow']
+            },
+            zoomCallback: function()
+            {
+                console.log('xxxxxxxx', 'hello world');
             }
         }
     );

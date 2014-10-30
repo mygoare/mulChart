@@ -315,7 +315,7 @@
                     if (i == datasetLen - 1)
                     {
                         clearTimeout(zoomCallbackSetTimeout);
-                        zoomCallbackSetTimeout = setTimeout(zoomCallback.bind(self, xScale.domain()), zoomCallbackTimer); // self is the html dom element of chart wrapper
+                        zoomCallbackSetTimeout = setTimeout(zoomCallback.bind(self, xScale.domain(), zoom.translate(), zoom.scale()), zoomCallbackTimer); // self is the html dom element of chart wrapper
                     }
 
                 };

@@ -282,10 +282,17 @@
             {
                 return function()
                 {
-                    if (xScale.domain()[0] < 0)
-                    {
-                        return
-                    }
+                    // panning limit
+                    var s = zoom.scale() - 1,
+                        t = zoom.translate(),
+                        tx = t[0],
+                        ty = t[1];
+
+                    // refered to xScale's definition
+                    tx = Math.min(tx, -s * scaleOffsetLeftBottom);
+                    tx = Math.max(tx, -s * (width - scaleOffsetRightTop));
+
+                    zoom.translate([tx, ty]);
 
                     // xaxis redraw
                     graph.select('.xaxis').call(xAxis);
@@ -308,7 +315,7 @@
                     if (i == datasetLen - 1)
                     {
                         clearTimeout(zoomCallbackSetTimeout);
-                        zoomCallbackSetTimeout = setTimeout(zoomCallback.bind(self), zoomCallbackTimer); // self is the html dom element of chart wrapper
+                        zoomCallbackSetTimeout = setTimeout(zoomCallback.bind(self, xScale.domain()), zoomCallbackTimer); // self is the html dom element of chart wrapper
                     }
 
                 };
@@ -533,7 +540,8 @@
 
                  */
                 // after zoom.on('zoom') all ready, then call it.
-                graphes.forEach(function(v)
+                // use rect1, rect2 is correct, graph can't call(zoom), it is a empty container
+                rects.forEach(function(v)
                 {
                     v.call(zoom);
                 });

@@ -28,6 +28,8 @@
 
         var self;
 
+        var xScaleWholedomain;
+
         var chart = function(selection)
         {
             // Data model
@@ -75,9 +77,9 @@
 
             // originDataset properties
             /*
-                category: date, integer
-                alias   : []
-                unit    : []
+             category: date, integer
+             alias   : []
+             unit    : []
              */
             var originDatasetCategory, originDatasetAlias, originDatasetUnit;
 
@@ -139,8 +141,9 @@
                     xScale = d3.scale.linear()
                 }
 
-                // x axis domain & range setting
-                xScale.domain(d3.extent(originDataset.x, function(d){return d})).range([scaleOffsetLeftBottom, width - scaleOffsetRightTop]);
+                // x axis domain & range setting todo: when you redraw, xScaleWholedomain will not change any more, should be fixed in the future
+                xScaleWholedomain = xScaleWholedomain ? xScaleWholedomain : d3.extent(originDataset.x, function(d){return d});
+                xScale.domain(xScaleWholedomain).range([scaleOffsetLeftBottom, width - scaleOffsetRightTop]);
                 xAxis = d3.svg.axis()
                     .tickSize(0)
                     .innerTickSize(6)

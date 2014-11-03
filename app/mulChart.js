@@ -682,7 +682,8 @@
             if (!arguments.length)
                 return zoomScale;
 
-            if (num > 1)
+            // zoom can't less than 0
+            if (num > 0)
             {
                 zoomScale = num;
             }

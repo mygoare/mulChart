@@ -172,6 +172,15 @@
 
                     var graph = d3.select(this)
                         .select('.g'+i);
+
+                    // white color rect as white background
+                    graph.append('rect')
+                        .attr('x', 0)
+                        .attr('y', 0)
+                        .attr('width', width)
+                        .attr('height', height)
+                        .attr('fill', 'white');
+
                     graph.append('clipPath')
                         .attr('id', 'clip')
                         .append('rect')
@@ -230,6 +239,7 @@
                             fill: 'purple'
                         });
 
+                    // transparent rect as move area
                     var rect = graph.append('rect')
                         .attr('x', 0)
                         .attr('y', 0)

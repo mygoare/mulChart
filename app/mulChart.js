@@ -2,7 +2,7 @@
 {
     var mulChart = {};
 
-    mulChart.version = '0.1.2';
+    mulChart.version = '0.1.3';
 
     mulChart.generate = function(config)
     {
@@ -11,7 +11,7 @@
         // params can control by outside
         var bindtoElement, data,
             size = {width: 960, height: 200},
-            margin = {top: 20, right: 10, bottom: 10, left: 30},
+            margin = {top: 20, right: 0, bottom: 20, left: 0},
             color =
             {
                 pattern: [
@@ -109,7 +109,7 @@
 
                 return yData;
             };
-
+            //..........................................................................
             var defineSvg = function()
             {
                 svg = d3.select(this)  // `this` is the html selection
@@ -118,6 +118,7 @@
                     .attr('width', width + margin.left + margin.right)
                     .attr('height', datasetLen * (height+margin.top+margin.bottom) - margin.bottom);  // hide the last margin.bottom area, don't want to show vertical line
             };
+            //..........................................................................
             var drawVerticalLine = function()
             {
                 verticalLine = svg.append('line')
@@ -130,6 +131,7 @@
                     .attr('opacity', 0)
                     .attr('class', 'vertical-line');
             };
+            //..........................................................................
             var defineCommonX = function()
             {
                 if (originDatasetCategory == 'date')
@@ -150,104 +152,161 @@
                     .scale(xScale)
                     .orient('top');
             };
-
+            //..........................................................................
             var drawCharts = function()
             {
                 for(var i = 0; i < datasetLen; i++)
                 {
-                    // draw each chart title
-                    svg.append('foreignObject')
-                        .attr('width', width)
-                        .attr('height', chartTitleHeight + 'px')
-                        .attr('transform', 'translate('+margin.left+','+ (margin.top - chartTitleHeight + i * (height + margin.top + margin.bottom) ) +')')
-                        .append('xhtml:body')
-                        .style('background', 'transparent')
-                        .html('<p style="line-height: '+chartTitleHeight+'px" class="chart-title"><span class="icon" style="background-color: '+color.pattern[i]+'"></span>'+(originDatasetAlias[i]?originDatasetAlias[i]: '') + '<span class="unit">'+ (originDatasetUnit[i]?originDatasetUnit[i]: '') +'</span></p>');
+                    //..........................................................................
+                    var graph, rect, circle, line, mainLine, yScale;
 
-                    var yScale = d3.scale.linear().domain(d3.extent(dataset[i], function(d){return d.y})).range([height - scaleOffsetLeftBottom, scaleOffsetRightTop]);
+                    yScale = d3.scale.linear().domain(d3.extent(dataset[i], function(d){return d.y})).range([height - scaleOffsetLeftBottom, scaleOffsetRightTop]);
 
                     var g = svg.append('g')
                         .attr('class', 'g'+i+' d3-chart-g')
                         .attr('transform', 'translate('+margin.left+','+ (margin.top + i * (height + margin.top + margin.bottom) ) +')');
 
-                    var graph = d3.select(this)
+                    graph = d3.select(this)
                         .select('.g'+i);
 
-                    // white color rect as white background
-                    graph.append('rect')
-                        .attr('x', 0)
-                        .attr('y', 0)
-                        .attr('width', width)
-                        .attr('height', height)
-                        .attr('fill', 'white');
+                    //..........................................................................
+                    var drawClipPath = function()
+                    {
+                        graph.append('clipPath')
+                            .attr('id', 'clip')
+                            .append('rect')
+                            .attr('width', width)
+                            .attr('height', height)
+                            .attr('transform', 'translate(0, 0)')
+                            .attr('fill', 'none');
+                    };
+                    //..........................................................................
+                    var drawChartTitle = function()
+                    {
+                        // draw each chart title
+                        svg.append('foreignObject')
+                            .attr('width', width)
+                            .attr('height', chartTitleHeight + 'px')
+                            .attr('transform', 'translate('+margin.left+','+ (margin.top - chartTitleHeight + i * (height + margin.top + margin.bottom) ) +')')
+                            .append('xhtml:body')
+                            .style('background', 'transparent')
+                            .html('<p style="line-height: '+chartTitleHeight+'px" class="chart-title"><span class="icon" style="background-color: '+color.pattern[i]+'"></span>'+(originDatasetAlias[i]?originDatasetAlias[i]: '') + '<span class="unit">'+ (originDatasetUnit[i]?originDatasetUnit[i]: '') +'</span></p>');
+                    };
+                    //..........................................................................
+                    var drawXAxis = function()
+                    {
+                        // xAxis
+                        graph.append('g')
+                            .attr('class', 'xaxis')
+                            .attr('transform', 'translate(0, '+ (height) +')')
+                            .call(xAxis);
+                    };
+                    //..........................................................................
+                    var drawYAxis = function()
+                    {
+                        // yAxis
+                        var yAxis = d3.svg.axis()
+                            .scale(yScale)
+                            .tickSize(0)
+                            .innerTickSize(8)
+                            .orient('right');
+                        graph.append('g')
+                            .attr('class', 'yaxis')
+                            .attr('transform', 'translate(0, 0)')
+                            .call(yAxis);
+                    };
+                    //..........................................................................
+                    var drawMainLine = function()
+                    {
+                        // line
+                        line = d3.svg.line()
+                            .x(function(d){return xScale(d.x)})
+                            .y(function(d){return yScale(d.y)})
+                            .interpolate('linear');
+                        mainLine = graph.append('path')
+                            .attr('d', line(dataset[i]))
+                            .attr('stroke', color.pattern[i])
+                            .attr('fill', 'none')
+                            .attr('clip-path', 'url(#clip)');
+                    };
+                    //..........................................................................
+                    var drawCircleDots = function()
+                    {
+                        // draw each chart circles
+                        graph.selectAll('circle')
+                            .data(dataset[i])
+                            .enter()
+                            .append('circle')
+                            .attr('class', 'circle-dot')
+                            .attr({
+                                cx: function(d){return xScale(d.x)},
+                                cy: function(d){return yScale(d.y)},
+                                r:  function(){return 3}
+                            })
+                            .attr('clip-path', 'url(#clip)');
+                    };
+                    //..........................................................................
+                    var drawFocusCircleDot = function()
+                    {
+                        // hover focus circle dot
+                        circle = graph.append('circle')
+                            .attr('class', 'focus-circle')
+                            .attr('opacity', 0)
+                            .attr({
+                                r: 4,
+                                fill: 'purple'
+                            });
+                    };
+                    //..........................................................................
+                    var drawMoveArea = function()
+                    {
+                        // transparent rect as move area
+                        rect = graph.append('rect')
+                            .attr('x', 0)
+                            .attr('y', 0)
+                            .attr('width', width)
+                            .attr('height', height)
+                            .attr('fill', 'transparent')
+                            .attr('cursor', 'move');
+                    };
+                    //..........................................................................
+                    var drawBorders = function()
+                    {
+                        // draw borders
+                        var leftBorder = graph.append('line')
+                            .attr('x1', 0 + 2)
+                            .attr('y1', 0)
+                            .attr('x2', 0 + 2)
+                            .attr('y2', height)
+                            .attr('stroke-width', 4)
+                            .attr('stroke', '#b5b5b5');
+                        var bottomBorder = graph.append('line')
+                            .attr('x1', 0)
+                            .attr('y1', height -1)
+                            .attr('x2', width)
+                            .attr('y2', height -1)
+                            .attr('stroke-width', 4)
+                            .attr('stroke', '#b5b5b5');
+                        var rightBorder = graph.append('line')
+                            .attr('x1', width - 1)
+                            .attr('y1', 0)
+                            .attr('x2', width - 1)
+                            .attr('y2', height)
+                            .attr('stroke-width', 2)
+                            .attr('stroke', '#b5b5b5');
+                    };
+                    //..........................................................................
 
-                    graph.append('clipPath')
-                        .attr('id', 'clip')
-                        .append('rect')
-                        .attr('width', width)
-                        .attr('height', height)
-                        .attr('transform', 'translate(0, 0)')
-                        .attr('fill', 'none');
-
-                    // xAxis
-                    graph.append('g')
-                        .attr('class', 'xaxis')
-                        .attr('transform', 'translate(0, '+ (height) +')')
-                        .call(xAxis);
-
-                    // yAxis
-                    var yAxis = d3.svg.axis()
-                        .scale(yScale)
-                        .tickSize(0)
-                        .innerTickSize(8)
-                        .orient('right');
-                    graph.append('g')
-                        .attr('class', 'yaxis')
-                        .attr('transform', 'translate(0, 0)')
-                        .call(yAxis);
-
-                    // line
-                    var line = d3.svg.line()
-                        .x(function(d){return xScale(d.x)})
-                        .y(function(d){return yScale(d.y)})
-                        .interpolate('linear');
-                    var mainLine = graph.append('path')
-                        .attr('d', line(dataset[i]))
-                        .attr('stroke', color.pattern[i])
-                        .attr('fill', 'none')
-                        .attr('clip-path', 'url(#clip)');
-
-                    // draw each chart circles
-                    graph.selectAll('circle')
-                        .data(dataset[i])
-                        .enter()
-                        .append('circle')
-                        .attr('class', 'circle-dot')
-                        .attr({
-                            cx: function(d){return xScale(d.x)},
-                            cy: function(d){return yScale(d.y)},
-                            r:  function(){return 3}
-                        })
-                        .attr('clip-path', 'url(#clip)');
-
-                    // hover focus circle dot
-                    var circle = graph.append('circle')
-                        .attr('class', 'focus-circle')
-                        .attr('opacity', 0)
-                        .attr({
-                            r: 4,
-                            fill: 'purple'
-                        });
-
-                    // transparent rect as move area
-                    var rect = graph.append('rect')
-                        .attr('x', 0)
-                        .attr('y', 0)
-                        .attr('width', width)
-                        .attr('height', height)
-                        .attr('fill', 'transparent')
-                        .attr('cursor', 'move');
-
+                    ////////////////////////////////////////////////////////////////////////////
+                    drawClipPath();
+                    drawChartTitle();
+                    drawXAxis();
+                    drawYAxis();
+                    drawMainLine();
+                    drawCircleDots();
+                    drawFocusCircleDot();
+                    drawMoveArea();
+                    drawBorders();
 
                     zoom.on('zoom.g' +i, onZoomFun(i, graph, xAxis, mainLine, line, yScale));
                     graphes.push(graph);
@@ -255,32 +314,9 @@
                     circles.push(circle);
                     mainLines.push(mainLine);
                     yScales.push(yScale);
-
-                    // draw borders
-                    var leftBorder = graph.append('line')
-                        .attr('x1', 0 + 2)
-                        .attr('y1', 0)
-                        .attr('x2', 0 + 2)
-                        .attr('y2', height)
-                        .attr('stroke-width', 4)
-                        .attr('stroke', '#b5b5b5');
-                    var bottomBorder = graph.append('line')
-                        .attr('x1', 0)
-                        .attr('y1', height -1)
-                        .attr('x2', width)
-                        .attr('y2', height -1)
-                        .attr('stroke-width', 4)
-                        .attr('stroke', '#b5b5b5');
-                    var rightBorder = graph.append('line')
-                        .attr('x1', width - 1)
-                        .attr('y1', 0)
-                        .attr('x2', width - 1)
-                        .attr('y2', height)
-                        .attr('stroke-width', 2)
-                        .attr('stroke', '#b5b5b5');
                 }
             };
-
+            //..........................................................................
             var drawTooltip = function()
             {
                 var htmlContainer = this;
@@ -288,53 +324,76 @@
                 tooltip.className = 'tooltip';
                 htmlContainer.appendChild(tooltip);
             };
-
+            //..........................................................................
 
             // Zoom binding function
             var onZoomFun = function(i, graph, xAxis, mainLine, line, yScale)
             {
                 return function()
                 {
-                    // panning limit
-                    var s = zoom.scale() - 1,
-                        t = zoom.translate(),
-                        tx = t[0],
-                        ty = t[1];
-
-                    // refered to xScale's definition
-                    tx = Math.min(tx, -s * scaleOffsetLeftBottom);
-                    tx = Math.max(tx, -s * (width - scaleOffsetRightTop));
-
-                    zoom.translate([tx, ty]);
-
-                    // xaxis redraw
-                    graph.select('.xaxis').call(xAxis);
-
-                    // line redraw
-                    line
-                        .y(function(d, i){return yScale(d.y)});
-                    mainLine.attr('d', line(dataset[i]));
-
-                    // circles redraw
-                    graph.selectAll('circle.circle-dot')
-                        .attr({
-                            cx: function(d){return xScale(d.x)},
-                            cy: function(d){return yScale(d.y)}
-                        });
-
-
-                    var zoomCallbackTimer = 1000;
-                    //run only once
-                    if (i == datasetLen - 1)
+                    var zoomCallbackTimer = 1000; // todo: need to set as a paramater
+                    //..........................................................................
+                    var setPanningLimit = function()
                     {
-                        clearTimeout(zoomCallbackSetTimeout);
-                        zoomCallbackSetTimeout = setTimeout(zoomCallback.bind(self, xScale.domain(), zoom.translate(), zoom.scale()), zoomCallbackTimer); // self is the html dom element of chart wrapper
-                    }
+                        // panning limit
+                        var s = zoom.scale() - 1,
+                            t = zoom.translate(),
+                            tx = t[0],
+                            ty = t[1];
 
+                        // referred to xScale's definition
+                        tx = Math.min(tx, -s * scaleOffsetLeftBottom);
+                        tx = Math.max(tx, -s * (width - scaleOffsetRightTop));
+
+                        zoom.translate([tx, ty]);
+                    };
+                    //..........................................................................
+                    var redrawXAxis = function()
+                    {
+                        // xaxis redraw
+                        graph.select('.xaxis').call(xAxis);
+                    };
+                    //..........................................................................
+                    var redrawMainLine = function()
+                    {
+                        // line redraw
+                        line
+                            .y(function(d, i){return yScale(d.y)});
+                        mainLine.attr('d', line(dataset[i]));
+                    };
+                    //..........................................................................
+                    var redrawCircleDots = function()
+                    {
+                        // circles redraw
+                        graph.selectAll('circle.circle-dot')
+                            .attr({
+                                cx: function(d){return xScale(d.x)},
+                                cy: function(d){return yScale(d.y)}
+                            });
+                    };
+                    //..........................................................................
+                    var onZoomCallback = function()
+                    {
+                        //run only once
+                        if (i == datasetLen - 1)
+                        {
+                            clearTimeout(zoomCallbackSetTimeout);
+                            zoomCallbackSetTimeout = setTimeout(zoomCallback.bind(self, xScale.domain(), zoom.translate(), zoom.scale()), zoomCallbackTimer); // self is the html dom element of chart wrapper
+                        }
+                    };
+
+                    ////////////////////////////////////////////////////////////////////////////
+                    setPanningLimit();
+                    redrawXAxis();
+                    redrawMainLine();
+                    redrawCircleDots();
+                    onZoomCallback();
                 };
             };
+            //..........................................................................
+
             // Mouse move binding function
-            var mouseMoveFun = function(index)
+            var onMouseMoveFun = function(index)
             {
                 var self = this.node();
                 var mouseX = d3.mouse(self)[0],
@@ -344,8 +403,10 @@
                     verticalLineX;
 
                 var flag = true;
+                ////////////////////////////////////////////////////////////////////////////
 
                 // when mousemove, every chart calculates the correct dot point
+                // dataset is the data after convert (convertDataFormat)
                 dataset.forEach(function(v, i)
                 {
                     var mainLine = mainLines[i],
@@ -527,16 +588,20 @@
                 }
 
             };
-            var mouseOutFun = function()
+            //..........................................................................
+            var onMouseOutFun = function()
             {
-                verticalLine.attr('opacity', 0);
-                circles.forEach(function(v, i)
+                //..........................................................................
+                var setCircleOpacity = function(v, i)
                 {
                     v.attr('opacity', 0);
-                });
+                };
+                ////////////////////////////////////////////////////////////////////////////
+                verticalLine.attr('opacity', 0);
+                circles.forEach(setCircleOpacity);
                 tooltip.style.opacity = 0;
             };
-
+            //..........................................................................
             var zoomBind = function()
             {
                 /*
@@ -554,21 +619,26 @@
                  */
                 // after zoom.on('zoom') all ready, then call it.
                 // use rect1, rect2 is correct, graph can't call(zoom), it is a empty container
-                rects.forEach(function(v)
+                var callZoom = function(v)
                 {
                     v.call(zoom);
-                });
+                };
+                ////////////////////////////////////////////////////////////////////////////
+                rects.forEach(callZoom);
             };
+            //..........................................................................
             var mouseMoveBind = function()
             {
-                rects.forEach(function(o, index)
+                //..........................................................................
+                var bindMouseEvent = function(o ,index)
                 {
-                    o.on('mousemove', mouseMoveFun.bind(o, index))
-                        .on('mouseout', mouseOutFun);
-                });
+                    o.on('mousemove', onMouseMoveFun.bind(o, index))
+                        .on('mouseout', onMouseOutFun);
+                };
+                ////////////////////////////////////////////////////////////////////////////
+                rects.forEach(bindMouseEvent);
             };
-
-
+            //..........................................................................
             var processSelection = function(data, index)
             {
                 // have a clone of origin data ready to use, DON'T change data by reference, be careful here.
@@ -613,7 +683,9 @@
                 // Mouse move binding
                 mouseMoveBind();
             };
-            //  Start here
+            //..........................................................................
+
+            ////////////////////////////////////////////////////////////////////////////
             var originDataSelection = selection;
             self = originDataSelection.node();
             originDataSelection.node().style.position = 'relative';

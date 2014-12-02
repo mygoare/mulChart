@@ -119,6 +119,22 @@
                     .attr('height', datasetLen * (height+margin.top+margin.bottom) - margin.bottom);  // hide the last margin.bottom area, don't want to show vertical line
             };
             //..........................................................................
+            var drawBackgroundRect = function(bgColor)
+            {
+                var g = svg.append('g')
+                    .attr('class', 'background-g')
+                    .attr('transform', 'translate(0, 0)');
+
+                for (var i = 0; i < datasetLen; i++)
+                {
+                    g.append('rect')
+                        .attr('fill', bgColor)
+                        .attr('width', width)
+                        .attr('height', height)
+                        .attr('transform', 'translate('+margin.left+','+ (margin.top + i * (height + margin.top + margin.bottom) ) +')');
+                }
+            };
+            //..........................................................................
             var drawVerticalLine = function()
             {
                 verticalLine = svg.append('line')
@@ -169,16 +185,6 @@
                     graph = d3.select(this)
                         .select('.g'+i);
 
-                    //..........................................................................
-                    var drawBackgroundRect = function()
-                    {
-                        graph.append('rect')
-                            .attr('width', width)
-                            .attr('height', height)
-                            .attr('transform', 'translate(0, 0)')
-                            .attr('fill', 'white')
-                            .attr('opacity', '0.6');
-                    };
                     //..........................................................................
                     var drawClipPath = function()
                     {
@@ -308,7 +314,6 @@
                     //..........................................................................
 
                     ////////////////////////////////////////////////////////////////////////////
-                    drawBackgroundRect();
                     drawClipPath();
                     drawChartTitle();
                     drawXAxis();
@@ -689,6 +694,8 @@
 
                 // Define main svg
                 defineSvg.call(this);
+                // Draw background color for each chart group
+                drawBackgroundRect('white');
                 // Draw vertical line
                 drawVerticalLine();
 

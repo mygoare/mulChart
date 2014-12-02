@@ -170,6 +170,16 @@
                         .select('.g'+i);
 
                     //..........................................................................
+                    var drawBackgroundRect = function()
+                    {
+                        graph.append('rect')
+                            .attr('width', width)
+                            .attr('height', height)
+                            .attr('transform', 'translate(0, 0)')
+                            .attr('fill', 'white')
+                            .attr('opacity', '0.6');
+                    };
+                    //..........................................................................
                     var drawClipPath = function()
                     {
                         graph.append('clipPath')
@@ -298,13 +308,14 @@
                     //..........................................................................
 
                     ////////////////////////////////////////////////////////////////////////////
+                    drawBackgroundRect();
                     drawClipPath();
                     drawChartTitle();
                     drawXAxis();
-                    drawYAxis();
                     drawMainLine();
                     drawCircleDots();
                     drawFocusCircleDot();
+                    drawYAxis();
                     drawMoveArea();
                     drawBorders();
 

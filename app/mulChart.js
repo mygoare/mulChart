@@ -671,9 +671,10 @@
                 originDataset = clone(data);
 
                 // validate x, y, category, alias, unit
-                if (!originDataset.x || !originDataset.y)
+                if (originDataset.x.length === 0 || originDataset.y.length === 0)
                 {
-                    throw new Error('Must have x and y data to draw the chart!');
+                    self.innerHTML = 'Must have x and y data to draw the chart!';
+                    return false;
                 }
                 originDatasetCategory      = originDataset.category ? originDataset.category : 'integer';
                 originDatasetAlias         = originDataset.alias ? originDataset.alias : [];

@@ -8,6 +8,12 @@
     <script src="app/mulChart.js"></script>
     <link rel="stylesheet" href="mulChart.css"/>
 </head>
+<style>
+    body
+    {
+        background-color: #eee;
+    }
+</style>
 <body>
 <h1>Example:</h1>
 <div id="example"></div>
@@ -43,6 +49,12 @@
                 {
                     width: 1000,
                     height: 200
+                },
+                zoomTranslate: [20, 0],
+                zoomScale: 1,
+                zoomCallback: function(domain, translate, scale)
+                {
+                    console.log('xxxxxxxx', domain, translate, scale);
                 }
             }
     );

@@ -452,10 +452,16 @@
                     var currentXValue = xScale.invert(pos.x);   // value, not position offset
                     var singleLineData = dataset[i];
                     var yAtDotValue;  // y value
+                    var singleLineDataLength = singleLineData.length;
 
                     var getRightDotValue = function(prev, after)
                     {
-                        if (Math.abs(currentXValue - singleLineData[prev].x) <= Math.abs(currentXValue - (singleLineData[after].x)))
+                        if (prev === '')  // strict equal, because 0 == '' return true
+                        {
+                            xAtDotValue = singleLineData[after].x;
+                            yAtDotValue = singleLineData[after].y;
+                        }
+                        else if (Math.abs(currentXValue - singleLineData[prev].x) <= Math.abs(currentXValue - (singleLineData[after].x)))
                         {
                             xAtDotValue = singleLineData[prev].x;
                             yAtDotValue = singleLineData[prev].y;
@@ -468,19 +474,28 @@
                         }
                     };
 
-                    if (singleLineData.length <= 20)   //  Linear search
+                    if (singleLineDataLength <= 20)   //  Linear search
                     {
                         singleLineData.forEach(function(data, index)
                         {
-                            if (currentXValue >= singleLineData[index].x && currentXValue <= singleLineData[index+1].x)      // todo: has bug of this method
+                            var low = index, high = index + 1;
+                            try
                             {
-                                getRightDotValue(index, index+1);
+                                if (currentXValue >= singleLineData[low].x && currentXValue <= singleLineData[high].x)
+                                {
+                                    getRightDotValue(low, high);
+                                }
                             }
+                            catch (e)
+                            {
+                                getRightDotValue('', singleLineDataLength - 1)
+                            }
+
                         });
                     }
                     else    //  Binary search
                     {
-                        var l = singleLineData.length;
+                        var l = singleLineDataLength;
                         var binarySearch = function(low, high)
                         {
                             var midKey = Math.floor((high + low) / 2);   // Array starts with 0

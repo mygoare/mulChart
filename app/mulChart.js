@@ -820,10 +820,12 @@
             return chart;
         };
 
+        //..........................................................................
         // Methods
-
+        //..........................................................................
         // clone object without reference
         // http://stackoverflow.com/questions/728360/most-elegant-way-to-clone-a-javascript-object
+        //..........................................................................
         function clone(obj)
         {
             var copy;
@@ -858,12 +860,14 @@
 
             throw new Error("Unable to copy obj! Its type isn't supported.");
         }
+        //..........................................................................
         function convertHtmlToDomElementObject(s)
         {
             var el = document.createElement('div');
             el.innerHTML = s;
             return el.childNodes[0];
         }
+        //..........................................................................
         function bindElementWithData(bindto, data)
         {
             if (!!bindto && !!data && typeof data === 'object')
@@ -876,15 +880,15 @@
                 return;
             }
         }
+        //..........................................................................
 
-        // Methods End
-
+        ////////////////////////////////////////////////////////////////////////////
         if (!config)
         {
             console.error('Please set up configure.');
             return;
         }
-
+        //..........................................................................
         if (config.bindto && config.data)
         {
             chart.bindto(config.bindto);
@@ -912,6 +916,7 @@
             zoomCallback = config.zoomCallback;
         }
 
+        //..........................................................................
         bindElementWithData(bindtoElement, data);
         d3Selection.call(chart);
 

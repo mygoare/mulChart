@@ -35,9 +35,9 @@ define(['d3', './mulChart'], function(d3, mulChart)
             {
                 pattern: ['red', 'orange', 'gray', 'yellow']
             },
-            zoomCallback: function()
+            zoomCallback: function(domain, translate, scale)
             {
-                console.log('xxxxxxxx', 'hello world');
+                console.log('The domain range is: ', domain, 'Zoom Translate & Scale are: ' ,translate, scale);
             }
         }
     );

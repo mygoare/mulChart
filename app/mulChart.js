@@ -2,7 +2,7 @@
 {
     var mulChart = {};
 
-    mulChart.version = '0.1.4';
+    mulChart.version = '0.1.5';
 
     mulChart.generate = function(config)
     {
@@ -14,11 +14,8 @@
             margin = {top: 20, right: 0, bottom: 20, left: 0},
             color =
             {
-                pattern: [
-                    '#000000', '#003300', '#006600', '#009900', '#00CC00', '#330000', '#333300', '#336600', '#339900', '#660000',
-                    '#663300', '#666600', '#669900', '#66CC00', '#66FF00', '#990000', '#993300', '#996600', '#999900', '#99CC00',
-                    '#99FF00', '#CC0000', '#CCFF00', '#FF0000', '#FF3300', '#FF6600', '#FF9900', '#FFCC00', '#FFFF00'
-                ]
+                // 60 colors from d3
+                pattern: d3.scale.category20().range().concat(d3.scale.category20b().range(), d3.scale.category20c().range())
             },
             d3Selection,
             zoomTranslate = [0, 0],

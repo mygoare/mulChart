@@ -1,6 +1,6 @@
 ### Example:
 
-![example](http://trello-abc.stor.sinaapp.com/5424bc8f784b754b2e4bf303c0a2b1060e8d08e4687bd.gif)
+![example](http://i.imgur.com/pnhcweX.gif)
 
 ### Why do this:
 
